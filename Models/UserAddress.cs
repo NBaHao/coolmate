@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApplication1.Entities;
+namespace CoolMate.Models;
 
 public partial class UserAddress
 {
-    public int? UserId { get; set; }
+    public int? Id { get; set; }
+    public String? UserId { get; set; }
 
     public int? AddressId { get; set; }
 

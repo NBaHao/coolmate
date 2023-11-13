@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApplication1.Entities;
+namespace CoolMate.Models;
 
 public partial class ProductItem
 {
@@ -21,7 +21,7 @@ public partial class ProductItem
 
     public virtual Product? Product { get; set; }
 
-    public virtual ICollection<ProductImage> ProductImages { get; set; } = new List<ProductImage>();
+    public virtual ICollection<ProductItemImage> ProductItemImages { get; set; } = new List<ProductItemImage>();
 
     public virtual ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
 }

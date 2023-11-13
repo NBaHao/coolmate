@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CoolMate.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Drawing;
@@ -41,8 +42,6 @@ namespace WebApplication1.Controllers
                             CategoryId = pi.Product.CategoryId,
                             Name = pi.Product.Name,
                             Description = pi.Product.Description,
-                            Img = pi.Product.Img,
-                            Hover = pi.Product.Hover,
                             PriceInt = pi.Product.PriceInt,
                             PriceStr = pi.Product.PriceStr,
                         };

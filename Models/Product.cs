@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApplication1.Entities;
+namespace CoolMate.Models;
 
 public partial class Product
 {
@@ -12,10 +12,6 @@ public partial class Product
     public string? Name { get; set; }
 
     public string? Description { get; set; }
-
-    public string? Img { get; set; }
-
-    public string? Hover { get; set; }
 
     public int? PriceInt { get; set; }
 

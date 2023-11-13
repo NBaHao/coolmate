@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CoolMate.Models;
+using System;
 using System.Collections.Generic;
 
 namespace WebApplication1.Entities;

@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using CoolMate.Utilities;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace WebApplication1.Entities;
+namespace CoolMate.Models;
 
-public partial class DBContext : DbContext
+public partial class DBContext : IdentityDbContext<SiteUser>
 {
     public DBContext()
     {
@@ -27,9 +30,9 @@ public partial class DBContext : DbContext
 
     public virtual DbSet<ProductCategory> ProductCategories { get; set; }
 
-    public virtual DbSet<ProductImage> ProductImages { get; set; }
-
     public virtual DbSet<ProductItem> ProductItems { get; set; }
+
+    public virtual DbSet<ProductItemImage> ProductItemImages { get; set; }
 
     public virtual DbSet<ShippingFee> ShippingFees { get; set; }
 
@@ -49,12 +52,19 @@ public partial class DBContext : DbContext
 
     public virtual DbSet<UserReview> UserReviews { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder){ }
-//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-//        => optionsBuilder.UseMySQL("server=localhost;port=3306;user=root;password=anhyeuem;database=ecommerce2");
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseMySQL("Server=127.0.0.1;User ID=root;Password=anhyeuem;Port=3306;Database=coolmate");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<IdentityUserLogin<String>>().HasNoKey();
+        modelBuilder.Entity<IdentityUserRole<string>>(b =>
+        {
+            b.HasKey(i => new { i.UserId, i.RoleId });
+        });
+
+        modelBuilder.Entity<IdentityUserToken<String>>().HasNoKey();
         modelBuilder.Entity<Address>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -136,16 +146,10 @@ public partial class DBContext : DbContext
             entity.Property(e => e.Id).HasColumnName("id");
             entity.Property(e => e.CategoryId).HasColumnName("category_id");
             entity.Property(e => e.Description)
-                .HasMaxLength(4000)
+                .HasMaxLength(1000)
                 .HasColumnName("description");
-            entity.Property(e => e.Hover)
-                .HasMaxLength(200)
-                .HasColumnName("hover");
-            entity.Property(e => e.Img)
-                .HasMaxLength(200)
-                .HasColumnName("img");
             entity.Property(e => e.Name)
-                .HasMaxLength(500)
+                .HasMaxLength(100)
                 .HasColumnName("name");
             entity.Property(e => e.PriceInt).HasColumnName("price_int");
             entity.Property(e => e.PriceStr)
@@ -168,25 +172,6 @@ public partial class DBContext : DbContext
                 .HasMaxLength(200)
                 .HasColumnName("category_name");
             entity.Property(e => e.ParentCategoryId).HasColumnName("parent_category_id");
-        });
-
-        modelBuilder.Entity<ProductImage>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("product_image");
-
-            entity.HasIndex(e => e.ProductItemId, "fk_product_item_id");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ProductItemId).HasColumnName("product_item_id");
-            entity.Property(e => e.Url)
-                .HasMaxLength(200)
-                .HasColumnName("url");
-
-            entity.HasOne(d => d.ProductItem).WithMany(p => p.ProductImages)
-                .HasForeignKey(d => d.ProductItemId)
-                .HasConstraintName("fk_product_item_id");
         });
 
         modelBuilder.Entity<ProductItem>(entity =>
@@ -213,6 +198,25 @@ public partial class DBContext : DbContext
             entity.HasOne(d => d.Product).WithMany(p => p.ProductItems)
                 .HasForeignKey(d => d.ProductId)
                 .HasConstraintName("fk_proditem_product");
+        });
+
+        modelBuilder.Entity<ProductItemImage>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity.ToTable("product_item_image");
+
+            entity.HasIndex(e => e.ProductItemId, "fk_product_item_id");
+
+            entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.ProductItemId).HasColumnName("product_item_id");
+            entity.Property(e => e.Url)
+                .HasMaxLength(200)
+                .HasColumnName("url");
+
+            entity.HasOne(d => d.ProductItem).WithMany(p => p.ProductItemImages)
+                .HasForeignKey(d => d.ProductItemId)
+                .HasConstraintName("fk_product_item_id");
         });
 
         modelBuilder.Entity<ShippingFee>(entity =>
@@ -337,20 +341,14 @@ public partial class DBContext : DbContext
 
         modelBuilder.Entity<SiteUser>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
+            entity.HasKey(e => e.Id);
 
             entity.ToTable("site_user");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.EmailAddress)
-                .HasMaxLength(350)
-                .HasColumnName("email_address");
             entity.Property(e => e.Name)
                 .HasMaxLength(50)
                 .HasColumnName("name");
-            entity.Property(e => e.Password)
-                .HasMaxLength(500)
-                .HasColumnName("password");
+            
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(20)
                 .HasColumnName("phone_number");
@@ -358,9 +356,8 @@ public partial class DBContext : DbContext
 
         modelBuilder.Entity<UserAddress>(entity =>
         {
-            entity
-                .HasNoKey()
-                .ToTable("user_address");
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+            entity.ToTable("user_address");
 
             entity.HasIndex(e => e.AddressId, "fk_useradd_address");
 

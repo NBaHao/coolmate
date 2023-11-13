@@ -8,7 +8,7 @@ using WebApplication1.Helpers;
 using WebApplication1.Services;
 using WebApplication1.Wrappers;
 using Microsoft.AspNetCore.Http;
-
+using CoolMate.Models;
 
 namespace WebApplication1.Controllers
 {
@@ -37,8 +37,6 @@ namespace WebApplication1.Controllers
                     CategoryId = s.CategoryId,
                     Name = s.Name,
                     Description = s.Description,
-                    Img = s.Img,
-                    Hover = s.Hover,
                     PriceInt = s.PriceInt,
                     PriceStr = s.PriceStr
                 }

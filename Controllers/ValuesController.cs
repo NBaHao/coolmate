@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CoolMate.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.DTO;
@@ -31,7 +33,7 @@ namespace CoolMate.Controllers
             var productsWithItemsAndImages = 
                 await DBContext.Products
                 .Include(p => p.ProductItems)
-                .ThenInclude(t => t.ProductImages)
+                .ThenInclude(t => t.ProductItemImages)
                 .ToListAsync();
             foreach (var product in productsWithItemsAndImages)
             {
@@ -50,11 +52,17 @@ namespace CoolMate.Controllers
             var reponse = PaginationHelper.CreatePagedReponse<Product>(data, validFilter, totalRecords, uriService, enpointUri);
             return Ok(reponse);
         }
-
-        [HttpGet("test")]
+        [HttpGet("testuserandmode")]
+        [Authorize(Roles = "mod,user")]
         public ActionResult GetTest()
         {   
-            return Ok(new Response<String>("oke"));
+            return Ok(new Response<String>("user and mod"));
+        }
+        [HttpGet("testmod")]
+        [Authorize(Roles = "mod")]
+        public ActionResult GetTestmode()
+        {
+            return Ok(new Response<String>("mod"));
         }
     }
 }

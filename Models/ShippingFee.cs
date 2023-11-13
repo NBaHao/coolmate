@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApplication1.Entities;
+namespace CoolMate.Models;
 
 public partial class ShippingFee
 {
