@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace WebApplication1.Entities;
+namespace CoolMate.Models;
 
 public partial class UserPaymentMethod
 {
     public int Id { get; set; }
 
-    public int? UserId { get; set; }
+    public String? UserId { get; set; }
 
     public int? PaymentTypeId { get; set; }
 

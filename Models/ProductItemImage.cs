@@ -3,17 +3,13 @@ using System.Collections.Generic;
 
 namespace CoolMate.Models;
 
-public partial class ShoppingCartItem
+public partial class ProductItemImage
 {
     public int Id { get; set; }
 
-    public int? CartId { get; set; }
-
     public int? ProductItemId { get; set; }
 
-    public int? Qty { get; set; }
-
-    public virtual ShoppingCart? Cart { get; set; }
+    public string? Url { get; set; }
 
     public virtual ProductItem? ProductItem { get; set; }
 }

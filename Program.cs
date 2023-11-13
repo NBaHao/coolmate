@@ -1,11 +1,20 @@
 using CloudinaryDotNet;
+using CoolMate.Helpers;
+using CoolMate.Interfaces;
+using CoolMate.Models;
 using CoolMate.Services;
+using CoolMate.Utilities;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using MySql.EntityFrameworkCore.Extensions;
+using System.Text;
 using System.Text.Json.Serialization;
 using WebApplication1.Entities;
 using WebApplication1.Services;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,8 +35,46 @@ builder.Services.AddEntityFrameworkMySQL().AddDbContext<DBContext>(options =>
     options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddIdentity<SiteUser, IdentityRole>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequiredLength = 0;
+    options.Password.RequiredUniqueChars = 0;
+
+}).AddEntityFrameworkStores<DBContext>()
+.AddDefaultTokenProviders();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.SaveToken = true;
+    options.RequireHttpsMetadata = false;
+    options.TokenValidationParameters = new TokenValidationParameters()
+    {
+        ValidateIssuer = false,
+        ValidateAudience = false,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
+    };
+});
+
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
+builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
+        o.TokenLifespan = TimeSpan.FromMinutes(10));
+
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfiles).Assembly);
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<CloudinaryService>();
 builder.Services.AddScoped<UriService>();
+builder.Services.AddTransient<IEmailService, EmailService>();
 
 var app = builder.Build();
 
@@ -39,7 +86,8 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 
 }
-else {
+else
+{
     app.UseSwagger();
     app.UseSwaggerUI();
     app.UseCors(options =>
@@ -57,7 +105,9 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
+
 
 app.MapControllerRoute(
     name: "default",
