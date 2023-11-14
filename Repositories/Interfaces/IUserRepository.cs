@@ -1,0 +1,19 @@
+﻿using CoolMate.Models;
+using Microsoft.AspNetCore.Identity;
+
+namespace CoolMate.Repositories.Interfaces
+{
+    public interface IUserRepository
+    {
+        Task<bool> IsUserExists(string email);
+        Task<IdentityResult> CreateUserAsync(SiteUser user, string password);
+        Task<IdentityResult> AddToRoleAsync(SiteUser user, string role);
+        Task<SiteUser> FindByNameAsync(string userName);
+        Task<bool> CheckPasswordAsync(SiteUser user, string password);
+        Task<IdentityResult> ChangePasswordAsync(SiteUser user, string oldPassword, string newPassword);
+        Task<SiteUser> FindByEmailAsync(string email);
+        Task<string> GeneratePasswordResetTokenAsync(SiteUser user);
+        Task UpdateSecurityStampAsync(SiteUser user);
+        Task<IdentityResult> ResetPasswordAsync(SiteUser user, string token, string newPassword);
+    }
+}
