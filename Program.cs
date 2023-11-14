@@ -2,6 +2,8 @@ using CloudinaryDotNet;
 using CoolMate.Helpers;
 using CoolMate.Interfaces;
 using CoolMate.Models;
+using CoolMate.Repositories;
+using CoolMate.Repositories.Interfaces;
 using CoolMate.Services;
 using CoolMate.Utilities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,6 +77,9 @@ builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<CloudinaryService>();
 builder.Services.AddScoped<UriService>();
 builder.Services.AddTransient<IEmailService, EmailService>();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<AuthService>();
 
 var app = builder.Build();
 
