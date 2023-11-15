@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Routing;
 using Microsoft.EntityFrameworkCore;
 using WebApplication1.DTO;
-using WebApplication1.Entities;
 using WebApplication1.Filter;
 using WebApplication1.Helpers;
 using WebApplication1.Services;
