@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using System.Drawing;
 using System.Xml.Linq;
 using WebApplication1.DTO;
-using WebApplication1.Entities;
 using WebApplication1.Filter;
 using WebApplication1.Helpers;
 using WebApplication1.Services;

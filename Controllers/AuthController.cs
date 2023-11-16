@@ -1,49 +1,23 @@
-﻿using AutoMapper;
-using CloudinaryDotNet.Actions;
-using CoolMate.DTO;
-using CoolMate.Helpers;
-using CoolMate.Interfaces;
-using CoolMate.Models;
+﻿using CoolMate.DTO;
 using CoolMate.Repositories.Interfaces;
 using CoolMate.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Data;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace CoolMate.Controllers
 {
     [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    public class authController : ControllerBase
     {
         private readonly AuthService _authService;
         private readonly IUserRepository _userRepository;
-        private readonly RoleManager<IdentityRole> _roleManager; /////// xong thì xóa những gì liên quan tới role
-        private readonly IMapper _mapper;
-        private readonly ITokenService _tokenService;
-        private readonly IEmailService _emailService;
-        public AuthController(
+
+        public authController(
             AuthService authService,
-            IUserRepository userRepository,
-            RoleManager<IdentityRole> roleManager,
-            ITokenService tokenService,
-            IMapper mapper,
-            IEmailService EmailService)
+            IUserRepository userRepository)
         {
             _authService = authService;
-            _mapper = mapper;
             _userRepository = userRepository;
-            _roleManager = roleManager;
-            _tokenService = tokenService;
-            _emailService = EmailService;
         }
 
         [HttpPost("register")]
@@ -91,7 +65,7 @@ namespace CoolMate.Controllers
         [HttpPost("changepassword")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
         {
-            var user = await _userRepository.FindByNameAsync(User.Identity.Name);
+            var user = await _userRepository.FindByEmailAsync(User.Identity.Name);
             if (user == null)
             {
                 return NotFound("User not found");

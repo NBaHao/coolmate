@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace CoolMate.Controllers
+namespace CoolMate.Controllers.tmp
 {
     public class HomeController : Controller
     {

@@ -14,7 +14,6 @@ using Microsoft.IdentityModel.Tokens;
 using MySql.EntityFrameworkCore.Extensions;
 using System.Text;
 using System.Text.Json.Serialization;
-using WebApplication1.Entities;
 using WebApplication1.Services;
 
 
@@ -80,6 +79,9 @@ builder.Services.AddTransient<IEmailService, EmailService>();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<AuthService>();
+builder.Services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+
 
 var app = builder.Build();
 

@@ -1,4 +1,5 @@
-﻿using CoolMate.Models;
+﻿using CoolMate.DTO;
+using CoolMate.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace CoolMate.Repositories.Interfaces
@@ -15,5 +16,9 @@ namespace CoolMate.Repositories.Interfaces
         Task<string> GeneratePasswordResetTokenAsync(SiteUser user);
         Task UpdateSecurityStampAsync(SiteUser user);
         Task<IdentityResult> ResetPasswordAsync(SiteUser user, string token, string newPassword);
+        Task<bool> UpdateUserInfomationAsync(string userId, string name, string email, string phoneNumber);
+        Task<bool> AddUserAddressAsync(SiteUser user, string addressLine);
+        Task<bool> MakeUserAddressDefaultAsync(string userId, int addressId);
+        Task<List<AddressDTO>> GetUserAddressesAsync(SiteUser user);
     }
 }

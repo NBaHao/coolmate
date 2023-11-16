@@ -56,7 +56,7 @@ namespace CoolMate.Services
         public async Task<Response<string>> Addrole(string email, string role)
         {
             var response = new Response<string>();
-            var user = await _userRepository.FindByNameAsync(email);
+            var user = await _userRepository.FindByEmailAsync(email);
             if (user == null)
             {
                 response.Errors = new string[] { "User not found" };
@@ -85,7 +85,7 @@ namespace CoolMate.Services
         public async Task<Response<string>> Login(LoginDTO loginDTO)
         {
             var response = new Response<string>();
-            var user = await _userRepository.FindByNameAsync(loginDTO.Email);
+            var user = await _userRepository.FindByEmailAsync(loginDTO.Email);
             if (user == null)
             {
                 response.Errors = new string[] { "incorrect email/password" };
@@ -144,7 +144,7 @@ namespace CoolMate.Services
             var token = await _userRepository.GeneratePasswordResetTokenAsync(user);
 
             //send email
-            var resetLink = $"https://your-website.com/resetpassword?email={Uri.EscapeDataString(forgotPasswordDto.Email)}&token={Uri.EscapeDataString(token)}";
+            var resetLink = $"https://your-website.com/resetpassword?email={Uri.EscapeDataString(forgotPasswordDto.Email)}&token={token}";
             var emailBody = $"Click <a href=\"{resetLink}\">here</a> to reset your password.";
 
             Mailrequest mailrequest = new Mailrequest();
