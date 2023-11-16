@@ -144,7 +144,7 @@ namespace CoolMate.Services
             var token = await _userRepository.GeneratePasswordResetTokenAsync(user);
 
             //send email
-            var resetLink = $"https://your-website.com/resetpassword?email={Uri.EscapeDataString(forgotPasswordDto.Email)}&token={Uri.EscapeDataString(token)}";
+            var resetLink = $"https://your-website.com/resetpassword?email={Uri.EscapeDataString(forgotPasswordDto.Email)}&token={token}";
             var emailBody = $"Click <a href=\"{resetLink}\">here</a> to reset your password.";
 
             Mailrequest mailrequest = new Mailrequest();

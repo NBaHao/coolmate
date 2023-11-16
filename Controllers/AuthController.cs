@@ -65,7 +65,7 @@ namespace CoolMate.Controllers
         [HttpPost("changepassword")]
         public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDTO changePasswordDto)
         {
-            var user = await _userRepository.FindByNameAsync(User.Identity.Name);
+            var user = await _userRepository.FindByEmailAsync(User.Identity.Name);
             if (user == null)
             {
                 return NotFound("User not found");

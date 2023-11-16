@@ -32,7 +32,7 @@ namespace CoolMate.Controllers
                 Price = sci.ProductItem.Product.PriceInt ?? 0,
                 Color = sci.ProductItem.Color,
                 Size = sci.ProductItem.Size,
-                Img = sci.ProductItem.Product.ProductItems.FirstOrDefault()?.ProductItemImages.FirstOrDefault()?.Url,
+                Img = sci.ProductItem.Product.ProductItems.Where(pi=>pi.Id == sci.ProductItemId).FirstOrDefault()?.ProductItemImages.FirstOrDefault()?.Url,
                 Qty = sci.Qty ?? 0,
                 AllItemsOfProduct = sci.ProductItem.Product.ProductItems.Select(pi => new ProductItemDetailsDTO
                 {
