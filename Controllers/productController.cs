@@ -55,7 +55,7 @@ namespace CoolMate.Controllers
         }
 
         [Authorize(Roles = "admin")]
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<ActionResult> CreateProduct ([FromForm] CreateProductDTO createProductDTO)
         {
             var product = new Product

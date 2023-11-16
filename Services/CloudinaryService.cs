@@ -43,7 +43,7 @@
                     PublicId = Path.GetFileNameWithoutExtension(file.FileName)
                 };
                 var uploadResult = await cloudinary.UploadAsync(uploadParams);
-                res.Add(uploadResult.ToString());
+                res.Add(uploadResult.Url.ToString());
             }
             return res;
         }

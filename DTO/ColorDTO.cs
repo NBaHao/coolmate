@@ -2,7 +2,7 @@
 {
     public class ColorDTO
     {
-        public string url;
-        public string color;
+        public string url { get; set; }
+        public string color { get; set; }
     }
 }
