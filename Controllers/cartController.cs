@@ -27,13 +27,14 @@ namespace CoolMate.Controllers
             var response = shoppingCart.ShoppingCartItems.Select(sci => new ShoppingCartDTO
             {
                 ProductItemId = sci.ProductItemId,
+                ProductId = sci.ProductItem.ProductId,
                 Name = sci.ProductItem.Product.Name,
                 Price = sci.ProductItem.Product.PriceInt ?? 0,
                 Color = sci.ProductItem.Color,
                 Size = sci.ProductItem.Size,
                 Img = sci.ProductItem.Product.ProductItems.FirstOrDefault()?.ProductItemImages.FirstOrDefault()?.Url,
                 Qty = sci.Qty ?? 0,
-                AllItemOfProduct = sci.ProductItem.Product.ProductItems.Select(pi => new ProductItemDetailsDTO
+                AllItemsOfProduct = sci.ProductItem.Product.ProductItems.Select(pi => new ProductItemDetailsDTO
                 {
                     ProductItemId = pi.Id,
                     Size = pi.Size,

@@ -32,6 +32,21 @@
 
             return uploadResult;
         }
+        public async Task<List<string>> UploadImagesAsync(List<IFormFile> files)
+        {
+            List<string> res = new List<string>();
+            foreach (var file in files)
+            {
+                var uploadParams = new ImageUploadParams
+                {
+                    File = new FileDescription(file.FileName, file.OpenReadStream()),
+                    PublicId = Path.GetFileNameWithoutExtension(file.FileName)
+                };
+                var uploadResult = await cloudinary.UploadAsync(uploadParams);
+                res.Add(uploadResult.ToString());
+            }
+            return res;
+        }
     }
 
 }
