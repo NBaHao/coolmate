@@ -32,7 +32,7 @@ namespace CoolMate.Controllers
                 Price = sci.ProductItem.Product.PriceInt ?? 0,
                 Color = sci.ProductItem.Color,
                 Size = sci.ProductItem.Size,
-                Img = sci.ProductItem.Product.ProductItems.Where(pi=>pi.Id == sci.ProductItemId).FirstOrDefault()?.ProductItemImages.FirstOrDefault()?.Url,
+                Img = sci.ProductItem.Product.ProductItems.Where(pi => pi.Id == sci.ProductItemId).FirstOrDefault()?.ProductItemImages.FirstOrDefault()?.Url,
                 Qty = sci.Qty ?? 0,
                 AllItemsOfProduct = sci.ProductItem.Product.ProductItems.Select(pi => new ProductItemDetailsDTO
                 {
@@ -47,10 +47,11 @@ namespace CoolMate.Controllers
 
         [Authorize]
         [HttpPost("add")]
-        public async Task<ActionResult> AddToCart([FromBody] int productItemId)
+        public async Task<ActionResult> AddToCart([FromBody] AddItemToCartDTO addItemToCartDTO)
         {
-            await _shoppingCartRepository.AddToCartItemAsync(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, productItemId);
-            return Ok("successfully...or not");
+            var res = await _shoppingCartRepository.AddToCartItemAsync(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, addItemToCartDTO.productItemId, addItemToCartDTO.quantity);
+            if (res) return Ok("successfully");
+            return BadRequest();
         }
 
         [Authorize]
@@ -58,8 +59,9 @@ namespace CoolMate.Controllers
         public async Task<ActionResult> UpdateQtyCartItem([FromBody] UpdateQtyCartItemDTO updateQtyCartItemDTO)
         {
             if (updateQtyCartItemDTO.quantity <= 0) return BadRequest("qty must > 0");
-            await _shoppingCartRepository.UpdateQtyCartItemAsync(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, updateQtyCartItemDTO.productItemId, updateQtyCartItemDTO.quantity);
-            return Ok("successfully...or not");
+            var res = await _shoppingCartRepository.UpdateQtyCartItemAsync(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, updateQtyCartItemDTO.productItemId, updateQtyCartItemDTO.quantity);
+            if (res) return Ok("successfully");
+            return BadRequest();
         }
 
         [Authorize]

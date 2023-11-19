@@ -40,8 +40,10 @@ namespace CoolMate.Repositories
                 .FirstOrDefaultAsync(sc => sc.UserId == userId);
         }
 
-        public async Task AddToCartItemAsync(string userId, int productItemId)
+        public async Task<bool> AddToCartItemAsync(string userId, int productItemId, int quantity)
         {
+            var productItem = await _dbContext.ProductItems.FindAsync(productItemId);
+            if (productItem == null) return false;
             var cart = await GetByUserIdAsync(userId);
             if (cart == null)
             {
@@ -53,27 +55,34 @@ namespace CoolMate.Repositories
             var existingItem = cart.ShoppingCartItems.FirstOrDefault(item => item.ProductItemId == productItemId);
             if (existingItem != null)
             {
-                existingItem.Qty = existingItem.Qty + 1;
+                if (productItem.QtyInStock < existingItem.Qty + quantity) return false;
+                existingItem.Qty = existingItem.Qty + quantity;
             }
             else
             {
-                var newItem = new ShoppingCartItem { CartId = cart.Id, ProductItemId = productItemId, Qty = 1 };
+                if (productItem.QtyInStock < quantity) return false;
+                var newItem = new ShoppingCartItem { CartId = cart.Id, ProductItemId = productItemId, Qty = quantity };
                 _dbContext.ShoppingCartItems.Add(newItem);
             }
 
             await _dbContext.SaveChangesAsync();
+            return true;
         }
-        public async Task UpdateQtyCartItemAsync(string userId, int productItemId, int qty)
+        public async Task<bool> UpdateQtyCartItemAsync(string userId, int productItemId, int qty)
         {
+            var productItem = await _dbContext.ProductItems.FindAsync(productItemId);
+            if (productItem == null || productItem.QtyInStock < qty) return false;
+
             var cart = await GetByUserIdAsync(userId);
             if (cart == null)
             {
-                return;
+                return false;
             }
 
             var existingItem = cart.ShoppingCartItems.FirstOrDefault(item => item.ProductItemId == productItemId);
             if (existingItem != null)
             {
+
                 existingItem.Qty = qty;
             }
             else   //Cho phép tự động thêm dù không có sản phẩm này (productItemId) trong giỏ
@@ -83,6 +92,7 @@ namespace CoolMate.Repositories
             }
 
             await _dbContext.SaveChangesAsync();
+            return true;
         }
 
         public async Task<bool> RemoveCartItemAsync(string userId, int productItemId)
