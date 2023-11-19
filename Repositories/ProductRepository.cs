@@ -35,7 +35,7 @@ namespace CoolMate.Repositories
         {
             return await _dbContext.Products
                         .Include(p => p.ProductItems)
-                        .ThenInclude(pi => pi.ProductItemImages)
+                            .ThenInclude(pi => pi.ProductItemImages)
                         .Where(p => p.Id == productId)
                         .FirstOrDefaultAsync();
         }
