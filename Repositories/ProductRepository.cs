@@ -25,10 +25,7 @@ namespace CoolMate.Repositories
 
         public async Task<List<Product>> GetAllProducts()
         {
-            return await _dbContext.Products
-                        .Include(p=>p.ProductItems)
-                        .ThenInclude(pi=>pi.ProductItemImages)
-                        .ToListAsync();
+            return await _dbContext.Products.ToListAsync();
         }
 
         public async Task<Product> GetProductAsync(int productId)

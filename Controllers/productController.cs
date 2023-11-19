@@ -32,6 +32,29 @@ namespace CoolMate.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> GetAll([FromQuery] PaginationFilter filter)
+        {
+            var enpointUri = $"{Request.Scheme}://{Request.Host}/api/product";
+            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var products = await _productRepository.GetAllProducts();
+            var totalRecords = products.Count();
+            var data = products
+                .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
+                .Take(validFilter.PageSize).ToList();
+
+            var reponse = PaginationHelper.CreatePagedReponse(data, validFilter, totalRecords, _uriService, enpointUri);
+            return Ok(reponse);
+        }
+
+        [HttpGet("get/{productId}")]
+        public async Task<ProductDTO> GetProduct(int productId)
+        {
+            var product = await _productRepository.GetProductAsync(productId);
+            return _mapper.Map<ProductDTO>(product);
+        }
+
         [HttpGet("{category}")]
         public async Task<ActionResult> GetByCategory(string category, [FromQuery] PaginationFilter filter)
         {
@@ -52,7 +75,7 @@ namespace CoolMate.Controllers
 
             var data = productsWithItemsAndImages
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
-            .Take(validFilter.PageSize).ToList();
+                .Take(validFilter.PageSize).ToList();
 
             var reponse = PaginationHelper.CreatePagedReponse(data, validFilter, totalRecords, _uriService, enpointUri);
             return Ok(reponse);
@@ -92,13 +115,6 @@ namespace CoolMate.Controllers
             }
             await _productRepository.CreateProductAsync(product);
             return Ok();
-        }
-
-        [HttpGet("get/{productId}")]
-        public async Task<ProductDTO> GetProduct(int productId)
-        {
-            var product = await _productRepository.GetProductAsync(productId);
-            return _mapper.Map<ProductDTO>(product);
         }
     }
 }
