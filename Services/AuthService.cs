@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
-using WebApplication1.Wrappers;
+using CoolMate.Wrappers;
 
 namespace CoolMate.Services
 {

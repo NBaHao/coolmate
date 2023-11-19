@@ -14,7 +14,7 @@ using Microsoft.IdentityModel.Tokens;
 using MySql.EntityFrameworkCore.Extensions;
 using System.Text;
 using System.Text.Json.Serialization;
-using WebApplication1.Services;
+using CoolMate.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);

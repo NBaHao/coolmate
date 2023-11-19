@@ -1,14 +1,14 @@
-﻿using CloudinaryDotNet;
+﻿using AutoMapper;
+using CloudinaryDotNet;
 using CoolMate.DTO;
 using CoolMate.Models;
 using CoolMate.Repositories.Interfaces;
 using CoolMate.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WebApplication1.DTO;
-using WebApplication1.Filter;
-using WebApplication1.Helpers;
-using WebApplication1.Services;
+using CoolMate.Filter;
+using CoolMate.Helpers;
+using CoolMate.Services;
 
 namespace CoolMate.Controllers
 {
@@ -18,14 +18,18 @@ namespace CoolMate.Controllers
         private readonly IProductRepository _productRepository;
         private readonly UriService _uriService;
         private readonly CloudinaryService _cloudinaryService;
-        private readonly DBContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public productController(IProductRepository productRepository, UriService uriService, CloudinaryService cloudinaryService, DBContext dBContext)
+        public productController(
+            IProductRepository productRepository,
+            UriService uriService,
+            CloudinaryService cloudinaryService,
+            IMapper mapper)
         {
             _productRepository = productRepository;
             _uriService = uriService;
             _cloudinaryService = cloudinaryService;
-            _dbContext = dBContext;
+            _mapper = mapper;
         }
 
         [HttpGet("{category}")]
@@ -56,7 +60,7 @@ namespace CoolMate.Controllers
 
         [Authorize(Roles = "admin")]
         [HttpPost("add")]
-        public async Task<ActionResult> CreateProduct ([FromForm] CreateProductDTO createProductDTO)
+        public async Task<ActionResult> CreateProduct([FromForm] CreateProductDTO createProductDTO)
         {
             var product = new Product
             {
@@ -86,9 +90,15 @@ namespace CoolMate.Controllers
                     product.ProductItems.Add(productItem);
                 }
             }
-            await _dbContext.Products.AddAsync(product);
-            await _dbContext.SaveChangesAsync();
+            await _productRepository.CreateProductAsync(product);
             return Ok();
+        }
+
+        [HttpGet("get/{productId}")]
+        public async Task<ProductDTO> GetProduct(int productId)
+        {
+            var product = await _productRepository.GetProductAsync(productId);
+            return _mapper.Map<ProductDTO>(product);
         }
     }
 }

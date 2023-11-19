@@ -1,7 +1,7 @@
-﻿using WebApplication1.Filter;
-using WebApplication1.Services;
+﻿using CoolMate.Filter;
+using CoolMate.Services;
 
-namespace WebApplication1.Helpers
+namespace CoolMate.Helpers
 {
     public class PaginationHelper
     {

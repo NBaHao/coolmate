@@ -1,6 +1,6 @@
-﻿using WebApplication1.Filter;
-using WebApplication1.Services;
-using WebApplication1.Wrappers;
+﻿using CoolMate.Filter;
+using CoolMate.Services;
+using CoolMate.Wrappers;
 
 public class PagedResponse<T> : Response<T>
 {

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
-using WebApplication1.Filter;
+using CoolMate.Filter;
 
-namespace WebApplication1.Services
+namespace CoolMate.Services
 {
     public class UriService
     {

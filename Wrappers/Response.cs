@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Wrappers
+﻿namespace CoolMate.Wrappers
 {
     public class Response<T>
     {

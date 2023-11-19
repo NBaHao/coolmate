@@ -1,4 +1,4 @@
-﻿namespace WebApplication1.Filter
+﻿namespace CoolMate.Filter
 {
     public class PaginationFilter
     {

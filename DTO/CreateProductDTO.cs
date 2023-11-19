@@ -1,4 +1,4 @@
-﻿using WebApplication1.DTO;
+﻿using CoolMate.DTO;
 
 namespace CoolMate.DTO
 {
