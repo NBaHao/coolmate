@@ -96,6 +96,7 @@ namespace CoolMate.Controllers
 
             foreach (var productItemDto in createProductDTO.ProductItems)
             {
+                List<string> imageUrls = null;
                 foreach (var size in productItemDto.Size)
                 {
                     var productItem = new ProductItem
@@ -105,7 +106,8 @@ namespace CoolMate.Controllers
                         ColorImage = productItemDto.Color.url,
                         QtyInStock = productItemDto.Qty
                     };
-                    var imageUrls = await _cloudinaryService.UploadImagesAsync(productItemDto.Images);
+                    if (imageUrls == null)
+                        imageUrls = await _cloudinaryService.UploadImagesAsync(productItemDto.Images);
                     foreach (var imageUrl in imageUrls)
                     {
                         productItem.ProductItemImages.Add(new ProductItemImage { Url = imageUrl });
@@ -114,7 +116,15 @@ namespace CoolMate.Controllers
                 }
             }
             await _productRepository.CreateProductAsync(product);
-            return Ok();
+            return Ok("successfully");
+        }
+        [Authorize(Roles = "admin")]
+        [HttpPut("update")]
+        public async Task<ActionResult> UpdateProduct([FromBody] UpdateProductDTO updateProductDTO)
+        {
+            var res = await _productRepository.UpdateProductAsync(_mapper.Map<Product>(updateProductDTO));
+            if (res) return Ok("successfully");
+            return BadRequest(res);
         }
     }
 }

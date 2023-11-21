@@ -8,10 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoolMate.Controllers
 {
     [Route("api/[controller]")]
-    public class CategoryController : ControllerBase
+    public class categoryController : ControllerBase
     {
         private readonly CategoryService _categoryService;
-        public CategoryController(CategoryService categoryService)
+        public categoryController(CategoryService categoryService)
         {
             _categoryService = categoryService;
         }

@@ -49,6 +49,7 @@ namespace CoolMate.Repositories
         public async Task<bool> UpdateProductAsync(Product product)
         { 
             var res = _dbContext.Products.Update(product);
+            await _dbContext.SaveChangesAsync();
             if (res != null) return true; 
             return false;
         }

@@ -15,6 +15,7 @@ namespace CoolMate.Utilities
             CreateMap<ProductItem, ProductItemDTO>();
             CreateMap<ProductItemImage, ProductItemImageDTO>();
             CreateMap<AddCategoryDTO, ProductCategory>();
+            CreateMap<UpdateProductDTO, Product>();
         }
     }
 }

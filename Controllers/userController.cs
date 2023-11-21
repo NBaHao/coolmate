@@ -58,7 +58,7 @@ namespace CoolMate.Controllers
             return BadRequest(res);
         }
 
-        [HttpPost("MakeAddressDefault")]
+        [HttpPost("makeAddressDefault")]
         [Authorize]
         public async Task<ActionResult> MakeUserAddressDefault([FromBody] int addressId )
         {
