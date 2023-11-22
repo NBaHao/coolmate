@@ -128,8 +128,17 @@ namespace CoolMate.Repositories
                 return false;
             }
 
-            oldItem.ProductItemId = newProductItemId;
-
+            var newItem = cart.ShoppingCartItems.FirstOrDefault(item => item.ProductItemId ==  newProductItemId);
+            
+            if (newItem == null)
+            {
+                oldItem.ProductItemId = newProductItemId;
+            } else
+            {
+                newItem.Qty = newItem.Qty + oldItem.Qty;
+                _dbContext.ShoppingCartItems.Remove(oldItem);
+            }
+            
             await _dbContext.SaveChangesAsync();
             return true;
         }
