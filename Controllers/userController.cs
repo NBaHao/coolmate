@@ -37,7 +37,7 @@ namespace CoolMate.Controllers
             return BadRequest(res);
         }
 
-        [HttpGet("getAdresses")]
+        [HttpGet("getAddresses")]
         [Authorize]
         public async Task<ActionResult> GetUserAddresses()
         {
