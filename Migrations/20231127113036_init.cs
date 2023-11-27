@@ -33,34 +33,6 @@ namespace CoolMate.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "order_status",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    status = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PRIMARY", x => x.id);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "payment_type",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    value = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PRIMARY", x => x.id);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "product_category",
                 columns: table => new
                 {
@@ -104,20 +76,6 @@ namespace CoolMate.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "shipping_method",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    name = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PRIMARY", x => x.id);
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -253,6 +211,31 @@ namespace CoolMate.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "shop_order",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
+                    user_id = table.Column<string>(type: "varchar(255)", nullable: true),
+                    order_date = table.Column<DateTime>(type: "datetime", nullable: true),
+                    payment_method_id = table.Column<int>(type: "int", nullable: true),
+                    shipping_address = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
+                    shipping_method = table.Column<int>(type: "int", nullable: true),
+                    order_total = table.Column<int>(type: "int", nullable: true),
+                    order_status = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PRIMARY", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_shoporder_user",
+                        column: x => x.user_id,
+                        principalTable: "site_user",
+                        principalColumn: "Id");
+                })
+                .Annotation("MySQL:Charset", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "shopping_cart",
                 columns: table => new
                 {
@@ -300,35 +283,6 @@ namespace CoolMate.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "user_payment_method",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    user_id = table.Column<string>(type: "varchar(255)", nullable: true),
-                    payment_type_id = table.Column<int>(type: "int", nullable: true),
-                    provider = table.Column<string>(type: "varchar(100)", maxLength: 100, nullable: true),
-                    account_number = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
-                    expiry_date = table.Column<DateTime>(type: "date", nullable: true),
-                    is_default = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PRIMARY", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_userpm_paytype",
-                        column: x => x.payment_type_id,
-                        principalTable: "payment_type",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_userpm_user",
-                        column: x => x.user_id,
-                        principalTable: "site_user",
-                        principalColumn: "Id");
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "product_item",
                 columns: table => new
                 {
@@ -352,48 +306,29 @@ namespace CoolMate.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "shop_order",
+                name: "order_line",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    user_id = table.Column<string>(type: "varchar(255)", nullable: true),
-                    order_date = table.Column<DateTime>(type: "datetime", nullable: true),
-                    payment_method_id = table.Column<int>(type: "int", nullable: true),
-                    shipping_address = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
-                    shipping_method = table.Column<int>(type: "int", nullable: true),
-                    order_total = table.Column<int>(type: "int", nullable: true),
-                    order_status = table.Column<int>(type: "int", nullable: true),
-                    AddressId = table.Column<int>(type: "int", nullable: true)
+                    product_item_id = table.Column<int>(type: "int", nullable: true),
+                    order_id = table.Column<int>(type: "int", nullable: true),
+                    qty = table.Column<int>(type: "int", nullable: true),
+                    price = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PRIMARY", x => x.id);
                     table.ForeignKey(
-                        name: "FK_shop_order_address_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "address",
+                        name: "fk_orderline_order",
+                        column: x => x.order_id,
+                        principalTable: "shop_order",
                         principalColumn: "id");
                     table.ForeignKey(
-                        name: "fk_shoporder_paymethod",
-                        column: x => x.payment_method_id,
-                        principalTable: "user_payment_method",
+                        name: "fk_orderline_proditem",
+                        column: x => x.product_item_id,
+                        principalTable: "product_item",
                         principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_shoporder_shipmethod",
-                        column: x => x.shipping_method,
-                        principalTable: "shipping_method",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_shoporder_status",
-                        column: x => x.order_status,
-                        principalTable: "order_status",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_shoporder_user",
-                        column: x => x.user_id,
-                        principalTable: "site_user",
-                        principalColumn: "Id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
 
@@ -439,33 +374,6 @@ namespace CoolMate.Migrations
                         name: "fk_shopcartitem_shopcart",
                         column: x => x.cart_id,
                         principalTable: "shopping_cart",
-                        principalColumn: "id");
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "order_line",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    product_item_id = table.Column<int>(type: "int", nullable: true),
-                    order_id = table.Column<int>(type: "int", nullable: true),
-                    qty = table.Column<int>(type: "int", nullable: true),
-                    price = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PRIMARY", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_orderline_order",
-                        column: x => x.order_id,
-                        principalTable: "shop_order",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_orderline_proditem",
-                        column: x => x.product_item_id,
-                        principalTable: "product_item",
                         principalColumn: "id");
                 })
                 .Annotation("MySQL:Charset", "utf8mb4");
@@ -548,11 +456,6 @@ namespace CoolMate.Migrations
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
-                name: "IX_shop_order_AddressId",
-                table: "shop_order",
-                column: "AddressId");
-
-            migrationBuilder.CreateIndex(
                 name: "fk_shopcart_user",
                 table: "shopping_cart",
                 column: "user_id");
@@ -575,16 +478,6 @@ namespace CoolMate.Migrations
             migrationBuilder.CreateIndex(
                 name: "fk_useradd_user",
                 table: "user_address",
-                column: "user_id");
-
-            migrationBuilder.CreateIndex(
-                name: "fk_userpm_paytype",
-                table: "user_payment_method",
-                column: "payment_type_id");
-
-            migrationBuilder.CreateIndex(
-                name: "fk_userpm_user",
-                table: "user_payment_method",
                 column: "user_id");
 
             migrationBuilder.CreateIndex(
@@ -638,6 +531,9 @@ namespace CoolMate.Migrations
                 name: "shopping_cart");
 
             migrationBuilder.DropTable(
+                name: "address");
+
+            migrationBuilder.DropTable(
                 name: "order_line");
 
             migrationBuilder.DropTable(
@@ -647,25 +543,10 @@ namespace CoolMate.Migrations
                 name: "product_item");
 
             migrationBuilder.DropTable(
-                name: "address");
-
-            migrationBuilder.DropTable(
-                name: "user_payment_method");
-
-            migrationBuilder.DropTable(
-                name: "shipping_method");
-
-            migrationBuilder.DropTable(
-                name: "order_status");
+                name: "site_user");
 
             migrationBuilder.DropTable(
                 name: "product");
-
-            migrationBuilder.DropTable(
-                name: "payment_type");
-
-            migrationBuilder.DropTable(
-                name: "site_user");
 
             migrationBuilder.DropTable(
                 name: "product_category");

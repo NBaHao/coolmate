@@ -16,6 +16,4 @@ public partial class Address
     public string? Commune { get; set; }
 
     public virtual ICollection<ShippingFee> ShippingFees { get; set; } = new List<ShippingFee>();
-
-    public virtual ICollection<ShopOrder> ShopOrders { get; set; } = new List<ShopOrder>();
 }

@@ -22,10 +22,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
 
     public virtual DbSet<OrderLine> OrderLines { get; set; }
 
-    public virtual DbSet<OrderStatus> OrderStatuses { get; set; }
-
-    public virtual DbSet<PaymentType> PaymentTypes { get; set; }
-
     public virtual DbSet<Product> Products { get; set; }
 
     public virtual DbSet<ProductCategory> ProductCategories { get; set; }
@@ -36,8 +32,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
 
     public virtual DbSet<ShippingFee> ShippingFees { get; set; }
 
-    public virtual DbSet<ShippingMethod> ShippingMethods { get; set; }
-
     public virtual DbSet<ShopOrder> ShopOrders { get; set; }
 
     public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
@@ -47,8 +41,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
     public virtual DbSet<SiteUser> SiteUsers { get; set; }
 
     public virtual DbSet<UserAddress> UserAddresses { get; set; }
-
-    public virtual DbSet<UserPaymentMethod> UserPaymentMethods { get; set; }
 
     public virtual DbSet<UserReview> UserReviews { get; set; }
 
@@ -109,30 +101,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.HasOne(d => d.ProductItem).WithMany(p => p.OrderLines)
                 .HasForeignKey(d => d.ProductItemId)
                 .HasConstraintName("fk_orderline_proditem");
-        });
-
-        modelBuilder.Entity<OrderStatus>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("order_status");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Status)
-                .HasMaxLength(100)
-                .HasColumnName("status");
-        });
-
-        modelBuilder.Entity<PaymentType>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("payment_type");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Value)
-                .HasMaxLength(100)
-                .HasColumnName("value");
         });
 
         modelBuilder.Entity<Product>(entity =>
@@ -237,18 +205,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
                 .HasConstraintName("fk_shippingfee_shipaddress");
         });
 
-        modelBuilder.Entity<ShippingMethod>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("shipping_method");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Name)
-                .HasMaxLength(100)
-                .HasColumnName("name");
-        });
-
         modelBuilder.Entity<ShopOrder>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -275,17 +231,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.Property(e => e.ShippingMethod).HasColumnName("shipping_method");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
-            entity.HasOne(d => d.OrderStatusNavigation).WithMany(p => p.ShopOrders)
-                .HasForeignKey(d => d.OrderStatus)
-                .HasConstraintName("fk_shoporder_status");
-
-            entity.HasOne(d => d.PaymentMethod).WithMany(p => p.ShopOrders)
-                .HasForeignKey(d => d.PaymentMethodId)
-                .HasConstraintName("fk_shoporder_paymethod");
-
-            entity.HasOne(d => d.ShippingMethodNavigation).WithMany(p => p.ShopOrders)
-                .HasForeignKey(d => d.ShippingMethod)
-                .HasConstraintName("fk_shoporder_shipmethod");
 
             entity.HasOne(d => d.User).WithMany(p => p.ShopOrders)
                 .HasForeignKey(d => d.UserId)
@@ -375,38 +320,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
                 .HasConstraintName("fk_useradd_user");
         });
 
-        modelBuilder.Entity<UserPaymentMethod>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("user_payment_method");
-
-            entity.HasIndex(e => e.PaymentTypeId, "fk_userpm_paytype");
-
-            entity.HasIndex(e => e.UserId, "fk_userpm_user");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.AccountNumber)
-                .HasMaxLength(50)
-                .HasColumnName("account_number");
-            entity.Property(e => e.ExpiryDate)
-                .HasColumnType("date")
-                .HasColumnName("expiry_date");
-            entity.Property(e => e.IsDefault).HasColumnName("is_default");
-            entity.Property(e => e.PaymentTypeId).HasColumnName("payment_type_id");
-            entity.Property(e => e.Provider)
-                .HasMaxLength(100)
-                .HasColumnName("provider");
-            entity.Property(e => e.UserId).HasColumnName("user_id");
-
-            entity.HasOne(d => d.PaymentType).WithMany(p => p.UserPaymentMethods)
-                .HasForeignKey(d => d.PaymentTypeId)
-                .HasConstraintName("fk_userpm_paytype");
-
-            entity.HasOne(d => d.User).WithMany(p => p.UserPaymentMethods)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("fk_userpm_user");
-        });
 
         modelBuilder.Entity<UserReview>(entity =>
         {

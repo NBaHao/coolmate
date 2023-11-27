@@ -85,42 +85,6 @@ namespace CoolMate.Migrations
                     b.ToTable("order_line", (string)null);
                 });
 
-            modelBuilder.Entity("CoolMate.Models.OrderStatus", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Status")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("status");
-
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
-
-                    b.ToTable("order_status", (string)null);
-                });
-
-            modelBuilder.Entity("CoolMate.Models.PaymentType", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Value")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("value");
-
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
-
-                    b.ToTable("payment_type", (string)null);
-                });
-
             modelBuilder.Entity("CoolMate.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -271,33 +235,12 @@ namespace CoolMate.Migrations
                     b.ToTable("shipping_fee", (string)null);
                 });
 
-            modelBuilder.Entity("CoolMate.Models.ShippingMethod", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("Name")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("name");
-
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
-
-                    b.ToTable("shipping_method", (string)null);
-                });
-
             modelBuilder.Entity("CoolMate.Models.ShopOrder", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasColumnName("id");
-
-                    b.Property<int?>("AddressId")
-                        .HasColumnType("int");
 
                     b.Property<DateTime?>("OrderDate")
                         .HasColumnType("datetime")
@@ -330,8 +273,6 @@ namespace CoolMate.Migrations
 
                     b.HasKey("Id")
                         .HasName("PRIMARY");
-
-                    b.HasIndex("AddressId");
 
                     b.HasIndex(new[] { "PaymentMethodId" }, "fk_shoporder_paymethod");
 
@@ -505,49 +446,6 @@ namespace CoolMate.Migrations
                     b.HasIndex(new[] { "UserId" }, "fk_useradd_user");
 
                     b.ToTable("user_address", (string)null);
-                });
-
-            modelBuilder.Entity("CoolMate.Models.UserPaymentMethod", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<string>("AccountNumber")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("account_number");
-
-                    b.Property<DateTime?>("ExpiryDate")
-                        .HasColumnType("date")
-                        .HasColumnName("expiry_date");
-
-                    b.Property<int?>("IsDefault")
-                        .HasColumnType("int")
-                        .HasColumnName("is_default");
-
-                    b.Property<int?>("PaymentTypeId")
-                        .HasColumnType("int")
-                        .HasColumnName("payment_type_id");
-
-                    b.Property<string>("Provider")
-                        .HasMaxLength(100)
-                        .HasColumnType("varchar(100)")
-                        .HasColumnName("provider");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("varchar(255)")
-                        .HasColumnName("user_id");
-
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
-
-                    b.HasIndex(new[] { "PaymentTypeId" }, "fk_userpm_paytype");
-
-                    b.HasIndex(new[] { "UserId" }, "fk_userpm_user");
-
-                    b.ToTable("user_payment_method", (string)null);
                 });
 
             modelBuilder.Entity("CoolMate.Models.UserReview", b =>
@@ -753,35 +651,10 @@ namespace CoolMate.Migrations
 
             modelBuilder.Entity("CoolMate.Models.ShopOrder", b =>
                 {
-                    b.HasOne("CoolMate.Models.Address", null)
-                        .WithMany("ShopOrders")
-                        .HasForeignKey("AddressId");
-
-                    b.HasOne("CoolMate.Models.OrderStatus", "OrderStatusNavigation")
-                        .WithMany("ShopOrders")
-                        .HasForeignKey("OrderStatus")
-                        .HasConstraintName("fk_shoporder_status");
-
-                    b.HasOne("CoolMate.Models.UserPaymentMethod", "PaymentMethod")
-                        .WithMany("ShopOrders")
-                        .HasForeignKey("PaymentMethodId")
-                        .HasConstraintName("fk_shoporder_paymethod");
-
-                    b.HasOne("CoolMate.Models.ShippingMethod", "ShippingMethodNavigation")
-                        .WithMany("ShopOrders")
-                        .HasForeignKey("ShippingMethod")
-                        .HasConstraintName("fk_shoporder_shipmethod");
-
                     b.HasOne("CoolMate.Models.SiteUser", "User")
                         .WithMany("ShopOrders")
                         .HasForeignKey("UserId")
                         .HasConstraintName("fk_shoporder_user");
-
-                    b.Navigation("OrderStatusNavigation");
-
-                    b.Navigation("PaymentMethod");
-
-                    b.Navigation("ShippingMethodNavigation");
 
                     b.Navigation("User");
                 });
@@ -830,23 +703,6 @@ namespace CoolMate.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("CoolMate.Models.UserPaymentMethod", b =>
-                {
-                    b.HasOne("CoolMate.Models.PaymentType", "PaymentType")
-                        .WithMany("UserPaymentMethods")
-                        .HasForeignKey("PaymentTypeId")
-                        .HasConstraintName("fk_userpm_paytype");
-
-                    b.HasOne("CoolMate.Models.SiteUser", "User")
-                        .WithMany("UserPaymentMethods")
-                        .HasForeignKey("UserId")
-                        .HasConstraintName("fk_userpm_user");
-
-                    b.Navigation("PaymentType");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("CoolMate.Models.UserReview", b =>
                 {
                     b.HasOne("CoolMate.Models.OrderLine", "OrderedProduct")
@@ -867,23 +723,11 @@ namespace CoolMate.Migrations
             modelBuilder.Entity("CoolMate.Models.Address", b =>
                 {
                     b.Navigation("ShippingFees");
-
-                    b.Navigation("ShopOrders");
                 });
 
             modelBuilder.Entity("CoolMate.Models.OrderLine", b =>
                 {
                     b.Navigation("UserReviews");
-                });
-
-            modelBuilder.Entity("CoolMate.Models.OrderStatus", b =>
-                {
-                    b.Navigation("ShopOrders");
-                });
-
-            modelBuilder.Entity("CoolMate.Models.PaymentType", b =>
-                {
-                    b.Navigation("UserPaymentMethods");
                 });
 
             modelBuilder.Entity("CoolMate.Models.Product", b =>
@@ -905,11 +749,6 @@ namespace CoolMate.Migrations
                     b.Navigation("ShoppingCartItems");
                 });
 
-            modelBuilder.Entity("CoolMate.Models.ShippingMethod", b =>
-                {
-                    b.Navigation("ShopOrders");
-                });
-
             modelBuilder.Entity("CoolMate.Models.ShopOrder", b =>
                 {
                     b.Navigation("OrderLines");
@@ -926,14 +765,7 @@ namespace CoolMate.Migrations
 
                     b.Navigation("ShoppingCarts");
 
-                    b.Navigation("UserPaymentMethods");
-
                     b.Navigation("UserReviews");
-                });
-
-            modelBuilder.Entity("CoolMate.Models.UserPaymentMethod", b =>
-                {
-                    b.Navigation("ShopOrders");
                 });
 #pragma warning restore 612, 618
         }

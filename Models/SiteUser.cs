@@ -23,7 +23,5 @@ public partial class SiteUser : IdentityUser
 
     public virtual ICollection<ShoppingCart> ShoppingCarts { get; set; } = new List<ShoppingCart>();
 
-    public virtual ICollection<UserPaymentMethod> UserPaymentMethods { get; set; } = new List<UserPaymentMethod>();
-
     public virtual ICollection<UserReview> UserReviews { get; set; } = new List<UserReview>();
 }

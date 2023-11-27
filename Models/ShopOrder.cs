@@ -23,11 +23,5 @@ public partial class ShopOrder
 
     public virtual ICollection<OrderLine> OrderLines { get; set; } = new List<OrderLine>();
 
-    public virtual OrderStatus? OrderStatusNavigation { get; set; }
-
-    public virtual UserPaymentMethod? PaymentMethod { get; set; }
-
-    public virtual ShippingMethod? ShippingMethodNavigation { get; set; }
-
     public virtual SiteUser? User { get; set; }
 }
