@@ -55,6 +55,25 @@ namespace CoolMate.Controllers
             return _mapper.Map<ProductDTO>(product);
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult> SearchProduct(string searchTerm)
+        {
+            var products = await _productRepository.SearchProductAsync(searchTerm);
+            var productDTOs = products.Select(p => new ProductSearchDTO
+            {
+                Id = p.Id,
+                CategoryId = p.CategoryId,
+                Name = p.Name,
+                Description = p.Description,
+                PriceInt = p.PriceInt,
+                PriceStr = p.PriceStr,
+                Img = p.ProductItems.FirstOrDefault()?.ProductItemImages.FirstOrDefault()?.Url 
+            }).ToList();
+
+            return Ok(productDTOs);
+
+        }
+
         [HttpGet("{category}")]
         public async Task<ActionResult> GetByCategory(string category, [FromQuery] PaginationFilter filter)
         {

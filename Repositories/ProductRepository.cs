@@ -42,7 +42,16 @@ namespace CoolMate.Repositories
             return await _dbContext.Products
                         .Include(p => p.ProductItems)
                         .ThenInclude(pi => pi.ProductItemImages)
-                        .Where(p => p.Category.CategoryName == category)
+                        .Where(p => p.Category.Slug == category)
+                        .ToListAsync();
+        }
+
+        public async Task<List<Product>> SearchProductAsync(string searchTerm)
+        {
+            return await _dbContext.Products
+                        .Include(p => p.ProductItems)
+                        .ThenInclude(pi => pi.ProductItemImages)
+                        .Where(p => p.Name.Contains(searchTerm))
                         .ToListAsync();
         }
 

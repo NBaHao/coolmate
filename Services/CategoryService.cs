@@ -26,9 +26,14 @@ namespace CoolMate.Services
 
         public async Task<bool> addCategory(AddCategoryDTO addCategoryDTO)
         {
-            var parentCate = await _categoryRepository.GetByIdAsync(addCategoryDTO.ParentCategoryId);
-            if (parentCate == null) return false;
+            if (addCategoryDTO.ParentCategoryId != 0)
+            {
+                var parentCate = await _categoryRepository.GetByIdAsync(addCategoryDTO.ParentCategoryId);
+                if (parentCate == null) return false;
+            }
             ProductCategory productCategory = _mapper.Map<ProductCategory>(addCategoryDTO);
+            if (productCategory.ParentCategoryId == 0) 
+                productCategory.ParentCategoryId = null;
             productCategory.Slug = ConvertToSlug(productCategory.CategoryName);
             await _categoryRepository.createCategoryAsync(productCategory);
             return true;
@@ -39,6 +44,7 @@ namespace CoolMate.Services
             var category = await _categoryRepository.GetByIdAsync(updateCategoryDTO.Id);
             if (category == null) return false;
             category.CategoryName = updateCategoryDTO.CategoryName;
+            category.Slug = ConvertToSlug(updateCategoryDTO.CategoryName);
             await _categoryRepository.updateCategoryAsync(category);
             return true;
         }
@@ -61,7 +67,8 @@ namespace CoolMate.Services
                 {
                     Id = category.Id,
                     CategoryName = category.CategoryName,
-                    Children = BuildCategoryTree(categories, category.Id)
+                    Children = BuildCategoryTree(categories, category.Id),
+                    slug = category.Slug
                 };
 
                 categoryDTOs.Add(categoryDTO);
