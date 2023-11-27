@@ -50,10 +50,10 @@ namespace CoolMate.Controllers
 
         [HttpPost("addAddress")]
         [Authorize]
-        public async Task<ActionResult> AddAdress([FromBody] string addressline)
+        public async Task<ActionResult> AddAdress([FromBody] AddressDTO addressDTO)
         {
             SiteUser user = await _userRepository.FindByEmailAsync(User.FindFirst(ClaimTypes.Name)?.Value);
-            var res = await _userRepository.AddUserAddressAsync(user, addressline);
+            var res = await _userRepository.AddUserAddressAsync(user, addressDTO);
             if (res) return Ok(res);
             return BadRequest(res);
         }
@@ -63,6 +63,26 @@ namespace CoolMate.Controllers
         public async Task<ActionResult> MakeUserAddressDefault([FromBody] int addressId )
         {
             var res = await _userRepository.MakeUserAddressDefaultAsync(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, addressId);
+            if (res) return Ok(res);
+            return BadRequest(res);
+        }
+
+        [HttpDelete("deleteAddress/{addressId}")]
+        [Authorize]
+        public async Task<ActionResult> DeleteUserAddress(int addressId)
+        {
+            SiteUser user = await _userRepository.FindByEmailAsync(User.FindFirst(ClaimTypes.Name)?.Value);
+            var res = await _userRepository.DeleteUserAddressAsync(user, addressId);
+            if (res) return Ok(res);
+            return BadRequest(res);
+        }
+
+        [HttpPut("updateAddress")]
+        [Authorize]
+        public async Task<ActionResult> UpdateUserAddress([FromBody] AddressDTO updatedAddress)
+        {
+            SiteUser user = await _userRepository.FindByEmailAsync(User.FindFirst(ClaimTypes.Name)?.Value);
+            var res = await _userRepository.UpdateUserAddressAsync(user, updatedAddress);
             if (res) return Ok(res);
             return BadRequest(res);
         }

@@ -17,8 +17,10 @@ namespace CoolMate.Repositories.Interfaces
         Task UpdateSecurityStampAsync(SiteUser user);
         Task<IdentityResult> ResetPasswordAsync(SiteUser user, string token, string newPassword);
         Task<bool> UpdateUserInfomationAsync(string userId, string name, string email, string phoneNumber);
-        Task<bool> AddUserAddressAsync(SiteUser user, string addressLine);
+        Task<bool> AddUserAddressAsync(SiteUser user, AddressDTO addressDTO);
         Task<bool> MakeUserAddressDefaultAsync(string userId, int addressId);
         Task<List<AddressDTO>> GetUserAddressesAsync(SiteUser user);
+        Task<bool> DeleteUserAddressAsync(SiteUser user, int addressId);
+        Task<bool> UpdateUserAddressAsync(SiteUser user, AddressDTO updatedAddress);
     }
 }

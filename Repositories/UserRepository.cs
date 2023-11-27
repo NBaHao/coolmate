@@ -91,12 +91,12 @@ namespace CoolMate.Repositories
             return false;
         }
 
-        public async Task<bool> AddUserAddressAsync(SiteUser user, string addressLine)
+        public async Task<bool> AddUserAddressAsync(SiteUser user, AddressDTO addressDTO)
         {
-            Address address = await _dbContext.Addresses.FirstOrDefaultAsync(ad => ad.AddressLine == addressLine);
+            Address address = await _dbContext.Addresses.FirstOrDefaultAsync(ad => ad.AddressLine == addressDTO.streetLine);
             if (address == null)
             {
-                address = new Address { AddressLine = addressLine };
+                address = new Address { AddressLine = addressDTO.streetLine };
                 await _dbContext.Addresses.AddAsync(address);
                 await _dbContext.SaveChangesAsync();
             }
@@ -107,8 +107,17 @@ namespace CoolMate.Repositories
                     .FirstOrDefaultAsync();
             if (result == null)
             {
-                await _dbContext.UserAddresses.AddAsync(new UserAddress { AddressId = address.Id, UserId = user.Id, IsDefault = null });
+                await _dbContext.UserAddresses.AddAsync(
+                    new UserAddress { 
+                        AddressId = address.Id,
+                        UserId = user.Id, 
+                        IsDefault = null,
+                        Name = addressDTO.Name, 
+                        PhoneNumber = addressDTO.PhoneNumber });
                 await _dbContext.SaveChangesAsync();
+
+                if (addressDTO.isDefault == 1)
+                    await MakeUserAddressDefaultAsync(user.Id, address.Id);
                 return true;
             }
 
@@ -144,11 +153,44 @@ namespace CoolMate.Repositories
                 {
                     addressId = ua.AddressId ?? 0,
                     streetLine = ua.Address.AddressLine ?? string.Empty,
-                    isDefault = ua.IsDefault
+                    isDefault = ua.IsDefault,
+                    PhoneNumber = ua.PhoneNumber ?? string.Empty,
+                    Name = ua.Name ?? string.Empty,
                 })
                 .ToListAsync();
 
             return addresses;
+        }
+        public async Task<bool> DeleteUserAddressAsync(SiteUser user, int addressId)
+        {
+            var userAddress = await _dbContext.UserAddresses
+                .FirstOrDefaultAsync(ua => ua.UserId == user.Id && ua.AddressId == addressId);
+
+            if (userAddress != null)
+            {
+                _dbContext.UserAddresses.Remove(userAddress);
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
+        }
+        public async Task<bool> UpdateUserAddressAsync(SiteUser user, AddressDTO updatedAddress)
+        {
+            var userAddress = await _dbContext.UserAddresses.Include(ua => ua.Address)
+                .FirstOrDefaultAsync(ua => ua.UserId == user.Id && ua.AddressId == updatedAddress.addressId);
+
+            if (userAddress != null)
+            {
+                userAddress.Name = updatedAddress.Name;
+                userAddress.PhoneNumber = updatedAddress.PhoneNumber;
+                userAddress.Address.AddressLine = updatedAddress.streetLine;
+
+                await _dbContext.SaveChangesAsync();
+                return true;
+            }
+
+            return false;
         }
     }
 }
