@@ -24,7 +24,16 @@ namespace CoolMate.Controllers
         {
             var user = await _userRepository.FindByEmailAsync(User.FindFirst(ClaimTypes.Name)?.Value);
             if (user == null) { return BadRequest("user not found"); }
-            var res = new UserInfoDTO { Email = user.Email, Name = user.Name, PhoneNumber = user.PhoneNumber, Username = user.UserName};
+            var res = new UserInfoDTO { 
+                Email = user.Email, 
+                Name = user.Name, 
+                PhoneNumber = user.PhoneNumber, 
+                Username = user.UserName,
+                Birthday = user.Birthday,
+                Gender = user.Gender,
+                Height = user.Height,
+                Weight = user.Weight
+            };
             return Ok(res);
         }
 
@@ -32,7 +41,16 @@ namespace CoolMate.Controllers
         [Authorize]
         public async Task<ActionResult> UpdateInfo([FromBody] UpdateUserDTO updateUserDTO)
         {
-            var res = await _userRepository.UpdateUserInfomationAsync(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, updateUserDTO.name, updateUserDTO.email, updateUserDTO.phoneNumber);
+            var res = await _userRepository.UpdateUserInfomationAsync(
+                User.FindFirst(ClaimTypes.NameIdentifier)?.Value, 
+                updateUserDTO.name, 
+                updateUserDTO.email,
+                updateUserDTO.phoneNumber,
+                updateUserDTO.Birthday,
+                updateUserDTO.Gender,
+                updateUserDTO.Height,
+                updateUserDTO.Weight
+                );
             if (res) return Ok(res);
             return BadRequest(res);
         }

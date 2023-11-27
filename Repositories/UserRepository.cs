@@ -67,9 +67,9 @@ namespace CoolMate.Repositories
             return await _userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
-        public async Task<bool> UpdateUserInfomationAsync(string userId, string name, string email, string phoneNumber)
+        public async Task<bool> UpdateUserInfomationAsync(string userId, string name, string email, string phoneNumber, string birthday, string gender, int? height, int? weight)
         {
-            if (name == null || email == null || phoneNumber == null) return false;
+            if (name == null || email == null || phoneNumber == null ) return false;
 
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null)
@@ -85,6 +85,10 @@ namespace CoolMate.Repositories
             user.Name = name;
             user.Email = email;
             user.PhoneNumber = phoneNumber;
+            user.Birthday = birthday;
+            user.Gender = gender;
+            user.Weight = weight;
+            user.Height = height;
 
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded) { return true; }
