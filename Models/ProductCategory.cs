@@ -10,6 +10,7 @@ public partial class ProductCategory
     public int? ParentCategoryId { get; set; }
 
     public string? CategoryName { get; set; }
+    public string? Slug {  get; set; }
 
     public virtual ICollection<Product> Products { get; set; } = new List<Product>();
 }

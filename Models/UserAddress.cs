@@ -7,9 +7,9 @@ public partial class UserAddress
 {
     public int? Id { get; set; }
     public String? UserId { get; set; }
-
     public int? AddressId { get; set; }
-
+    public String? Name { get; set; }
+    public String? PhoneNumber { get; set; }
     public int? IsDefault { get; set; }
 
     public virtual Address? Address { get; set; }

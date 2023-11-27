@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoolMate.Migrations
 {
     [DbContext(typeof(DBContext))]
-    [Migration("20231113095424_init")]
+    [Migration("20231127074042_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -178,6 +178,11 @@ namespace CoolMate.Migrations
                         .HasColumnType("int")
                         .HasColumnName("parent_category_id");
 
+                    b.Property<string>("Slug")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
+                        .HasColumnName("slug");
+
                     b.HasKey("Id")
                         .HasName("PRIMARY");
 
@@ -294,10 +299,8 @@ namespace CoolMate.Migrations
                         .HasColumnType("int")
                         .HasColumnName("id");
 
-                    b.Property<string>("Name")
-                        .HasMaxLength(50)
-                        .HasColumnType("varchar(50)")
-                        .HasColumnName("name");
+                    b.Property<int?>("AddressId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("OrderDate")
                         .HasColumnType("datetime")
@@ -315,8 +318,9 @@ namespace CoolMate.Migrations
                         .HasColumnType("int")
                         .HasColumnName("payment_method_id");
 
-                    b.Property<int?>("ShippingAddress")
-                        .HasColumnType("int")
+                    b.Property<string>("ShippingAddress")
+                        .HasMaxLength(200)
+                        .HasColumnType("varchar(200)")
                         .HasColumnName("shipping_address");
 
                     b.Property<int?>("ShippingMethod")
@@ -330,9 +334,9 @@ namespace CoolMate.Migrations
                     b.HasKey("Id")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "PaymentMethodId" }, "fk_shoporder_paymethod");
+                    b.HasIndex("AddressId");
 
-                    b.HasIndex(new[] { "ShippingAddress" }, "fk_shoporder_shipaddress");
+                    b.HasIndex(new[] { "PaymentMethodId" }, "fk_shoporder_paymethod");
 
                     b.HasIndex(new[] { "ShippingMethod" }, "fk_shoporder_shipmethod");
 
@@ -400,6 +404,11 @@ namespace CoolMate.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Birthday")
+                        .HasMaxLength(10)
+                        .HasColumnType("varchar(10)")
+                        .HasColumnName("birthday");
+
                     b.Property<string>("ConcurrencyStamp")
                         .HasColumnType("longtext");
 
@@ -409,6 +418,15 @@ namespace CoolMate.Migrations
 
                     b.Property<bool>("EmailConfirmed")
                         .HasColumnType("tinyint(1)");
+
+                    b.Property<string>("Gender")
+                        .HasMaxLength(8)
+                        .HasColumnType("varchar(8)")
+                        .HasColumnName("gender");
+
+                    b.Property<int?>("Height")
+                        .HasColumnType("int")
+                        .HasColumnName("height");
 
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("tinyint(1)");
@@ -447,6 +465,10 @@ namespace CoolMate.Migrations
                     b.Property<string>("UserName")
                         .HasColumnType("longtext");
 
+                    b.Property<int?>("Weight")
+                        .HasColumnType("int")
+                        .HasColumnName("weight");
+
                     b.HasKey("Id");
 
                     b.ToTable("site_user", (string)null);
@@ -465,6 +487,14 @@ namespace CoolMate.Migrations
                     b.Property<int?>("IsDefault")
                         .HasColumnType("int")
                         .HasColumnName("is_default");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext")
+                        .HasColumnName("name");
+
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("longtext")
+                        .HasColumnName("phone_number");
 
                     b.Property<string>("UserId")
                         .HasColumnType("varchar(255)")
@@ -726,6 +756,10 @@ namespace CoolMate.Migrations
 
             modelBuilder.Entity("CoolMate.Models.ShopOrder", b =>
                 {
+                    b.HasOne("CoolMate.Models.Address", null)
+                        .WithMany("ShopOrders")
+                        .HasForeignKey("AddressId");
+
                     b.HasOne("CoolMate.Models.OrderStatus", "OrderStatusNavigation")
                         .WithMany("ShopOrders")
                         .HasForeignKey("OrderStatus")
@@ -735,11 +769,6 @@ namespace CoolMate.Migrations
                         .WithMany("ShopOrders")
                         .HasForeignKey("PaymentMethodId")
                         .HasConstraintName("fk_shoporder_paymethod");
-
-                    b.HasOne("CoolMate.Models.Address", "ShippingAddressNavigation")
-                        .WithMany("ShopOrders")
-                        .HasForeignKey("ShippingAddress")
-                        .HasConstraintName("fk_shoporder_shipaddress");
 
                     b.HasOne("CoolMate.Models.ShippingMethod", "ShippingMethodNavigation")
                         .WithMany("ShopOrders")
@@ -754,8 +783,6 @@ namespace CoolMate.Migrations
                     b.Navigation("OrderStatusNavigation");
 
                     b.Navigation("PaymentMethod");
-
-                    b.Navigation("ShippingAddressNavigation");
 
                     b.Navigation("ShippingMethodNavigation");
 

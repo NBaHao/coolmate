@@ -9,13 +9,11 @@ public partial class ShopOrder
 
     public String? UserId { get; set; }
 
-    public string? Name { get; set; }
-
     public DateTime? OrderDate { get; set; }
 
     public int? PaymentMethodId { get; set; }
 
-    public int? ShippingAddress { get; set; }
+    public String? ShippingAddress { get; set; }
 
     public int? ShippingMethod { get; set; }
 
@@ -28,8 +26,6 @@ public partial class ShopOrder
     public virtual OrderStatus? OrderStatusNavigation { get; set; }
 
     public virtual UserPaymentMethod? PaymentMethod { get; set; }
-
-    public virtual Address? ShippingAddressNavigation { get; set; }
 
     public virtual ShippingMethod? ShippingMethodNavigation { get; set; }
 

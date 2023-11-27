@@ -3,6 +3,8 @@ using CoolMate.DTO;
 using CoolMate.Models;
 using CoolMate.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
+using System.Text;
 
 namespace CoolMate.Services
 {
@@ -26,7 +28,9 @@ namespace CoolMate.Services
         {
             var parentCate = await _categoryRepository.GetByIdAsync(addCategoryDTO.ParentCategoryId);
             if (parentCate == null) return false;
-            await _categoryRepository.createCategoryAsync(_mapper.Map<ProductCategory>(addCategoryDTO));
+            ProductCategory productCategory = _mapper.Map<ProductCategory>(addCategoryDTO);
+            productCategory.Slug = ConvertToSlug(productCategory.CategoryName);
+            await _categoryRepository.createCategoryAsync(productCategory);
             return true;
         }
 
@@ -64,6 +68,24 @@ namespace CoolMate.Services
             }
 
             return categoryDTOs;
+        }
+        static string ConvertToSlug(string input)
+        {
+            string normalizedString = input.Normalize(NormalizationForm.FormD);
+            StringBuilder stringBuilder = new StringBuilder();
+
+            foreach (char c in normalizedString)
+            {
+                UnicodeCategory unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+                if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+                {
+                    stringBuilder.Append(c);
+                }
+            }
+
+            string slug = stringBuilder.ToString().ToLower().Replace(' ', '_');
+
+            return slug;
         }
     }
 }

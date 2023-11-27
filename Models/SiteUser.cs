@@ -14,6 +14,10 @@ public partial class SiteUser : IdentityUser
     public override string? Email { get; set; }
 
     public string? PhoneNumber { get; set; }
+    public string? Gender { get; set; }
+    public int? Height { get; set; }
+    public int? Weight { get; set; }
+    public string? Birthday { get; set; }
 
     public virtual ICollection<ShopOrder> ShopOrders { get; set; } = new List<ShopOrder>();
 

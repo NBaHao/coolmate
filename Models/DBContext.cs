@@ -168,6 +168,7 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.ToTable("product_category");
 
             entity.Property(e => e.Id).HasColumnName("id");
+            entity.Property(e => e.Slug).HasMaxLength(200).HasColumnName("slug");
             entity.Property(e => e.CategoryName)
                 .HasMaxLength(200)
                 .HasColumnName("category_name");
@@ -256,8 +257,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
 
             entity.HasIndex(e => e.PaymentMethodId, "fk_shoporder_paymethod");
 
-            entity.HasIndex(e => e.ShippingAddress, "fk_shoporder_shipaddress");
-
             entity.HasIndex(e => e.ShippingMethod, "fk_shoporder_shipmethod");
 
             entity.HasIndex(e => e.OrderStatus, "fk_shoporder_status");
@@ -265,16 +264,14 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.HasIndex(e => e.UserId, "fk_shoporder_user");
 
             entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.Name)
-                .HasMaxLength(50)
-                .HasColumnName("name");
+
             entity.Property(e => e.OrderDate)
                 .HasColumnType("datetime")
                 .HasColumnName("order_date");
             entity.Property(e => e.OrderStatus).HasColumnName("order_status");
             entity.Property(e => e.OrderTotal).HasColumnName("order_total");
             entity.Property(e => e.PaymentMethodId).HasColumnName("payment_method_id");
-            entity.Property(e => e.ShippingAddress).HasColumnName("shipping_address");
+            entity.Property(e => e.ShippingAddress).HasMaxLength(200).HasColumnName("shipping_address");
             entity.Property(e => e.ShippingMethod).HasColumnName("shipping_method");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
@@ -285,10 +282,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.HasOne(d => d.PaymentMethod).WithMany(p => p.ShopOrders)
                 .HasForeignKey(d => d.PaymentMethodId)
                 .HasConstraintName("fk_shoporder_paymethod");
-
-            entity.HasOne(d => d.ShippingAddressNavigation).WithMany(p => p.ShopOrders)
-                .HasForeignKey(d => d.ShippingAddress)
-                .HasConstraintName("fk_shoporder_shipaddress");
 
             entity.HasOne(d => d.ShippingMethodNavigation).WithMany(p => p.ShopOrders)
                 .HasForeignKey(d => d.ShippingMethod)
@@ -352,6 +345,10 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(20)
                 .HasColumnName("phone_number");
+            entity.Property(e => e.Gender).HasMaxLength(8).HasColumnName("gender");
+            entity.Property(e => e.Height).HasColumnName("height");
+            entity.Property(e => e.Weight).HasColumnName("weight");
+            entity.Property(e => e.Birthday).HasMaxLength(10).HasColumnName("birthday");
         });
 
         modelBuilder.Entity<UserAddress>(entity =>
@@ -366,6 +363,8 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.Property(e => e.AddressId).HasColumnName("address_id");
             entity.Property(e => e.IsDefault).HasColumnName("is_default");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
 
             entity.HasOne(d => d.Address).WithMany()
                 .HasForeignKey(d => d.AddressId)

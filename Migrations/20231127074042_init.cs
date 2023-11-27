@@ -67,7 +67,8 @@ namespace CoolMate.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     parent_category_id = table.Column<int>(type: "int", nullable: true),
-                    category_name = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
+                    category_name = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
+                    slug = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -128,6 +129,10 @@ namespace CoolMate.Migrations
                     name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
                     Email = table.Column<string>(type: "longtext", nullable: true),
                     phone_number = table.Column<string>(type: "varchar(20)", maxLength: 20, nullable: true),
+                    gender = table.Column<string>(type: "varchar(8)", maxLength: 8, nullable: true),
+                    height = table.Column<int>(type: "int", nullable: true),
+                    weight = table.Column<int>(type: "int", nullable: true),
+                    birthday = table.Column<string>(type: "varchar(10)", maxLength: 10, nullable: true),
                     UserName = table.Column<string>(type: "longtext", nullable: true),
                     NormalizedUserName = table.Column<string>(type: "longtext", nullable: true),
                     NormalizedEmail = table.Column<string>(type: "longtext", nullable: true),
@@ -274,6 +279,8 @@ namespace CoolMate.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     user_id = table.Column<string>(type: "varchar(255)", nullable: true),
                     address_id = table.Column<int>(type: "int", nullable: true),
+                    name = table.Column<string>(type: "longtext", nullable: true),
+                    phone_number = table.Column<string>(type: "longtext", nullable: true),
                     is_default = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -351,26 +358,26 @@ namespace CoolMate.Migrations
                     id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     user_id = table.Column<string>(type: "varchar(255)", nullable: true),
-                    name = table.Column<string>(type: "varchar(50)", maxLength: 50, nullable: true),
                     order_date = table.Column<DateTime>(type: "datetime", nullable: true),
                     payment_method_id = table.Column<int>(type: "int", nullable: true),
-                    shipping_address = table.Column<int>(type: "int", nullable: true),
+                    shipping_address = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
                     shipping_method = table.Column<int>(type: "int", nullable: true),
                     order_total = table.Column<int>(type: "int", nullable: true),
-                    order_status = table.Column<int>(type: "int", nullable: true)
+                    order_status = table.Column<int>(type: "int", nullable: true),
+                    AddressId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PRIMARY", x => x.id);
                     table.ForeignKey(
+                        name: "FK_shop_order_address_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "address",
+                        principalColumn: "id");
+                    table.ForeignKey(
                         name: "fk_shoporder_paymethod",
                         column: x => x.payment_method_id,
                         principalTable: "user_payment_method",
-                        principalColumn: "id");
-                    table.ForeignKey(
-                        name: "fk_shoporder_shipaddress",
-                        column: x => x.shipping_address,
-                        principalTable: "address",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_shoporder_shipmethod",
@@ -526,11 +533,6 @@ namespace CoolMate.Migrations
                 column: "payment_method_id");
 
             migrationBuilder.CreateIndex(
-                name: "fk_shoporder_shipaddress",
-                table: "shop_order",
-                column: "shipping_address");
-
-            migrationBuilder.CreateIndex(
                 name: "fk_shoporder_shipmethod",
                 table: "shop_order",
                 column: "shipping_method");
@@ -544,6 +546,11 @@ namespace CoolMate.Migrations
                 name: "fk_shoporder_user",
                 table: "shop_order",
                 column: "user_id");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_shop_order_AddressId",
+                table: "shop_order",
+                column: "AddressId");
 
             migrationBuilder.CreateIndex(
                 name: "fk_shopcart_user",
@@ -640,10 +647,10 @@ namespace CoolMate.Migrations
                 name: "product_item");
 
             migrationBuilder.DropTable(
-                name: "user_payment_method");
+                name: "address");
 
             migrationBuilder.DropTable(
-                name: "address");
+                name: "user_payment_method");
 
             migrationBuilder.DropTable(
                 name: "shipping_method");
