@@ -11,7 +11,7 @@ public partial class ShopOrder
 
     public DateTime? OrderDate { get; set; }
 
-    public int? PaymentMethodId { get; set; }
+    public int? PaymentMethod { get; set; }
 
     public String? ShippingAddress { get; set; }
 

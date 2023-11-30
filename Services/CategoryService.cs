@@ -90,7 +90,7 @@ namespace CoolMate.Services
                 }
             }
 
-            string slug = stringBuilder.ToString().ToLower().Replace(' ', '_');
+            string slug = stringBuilder.ToString().ToLower().Replace(' ', '-');
 
             return slug;
         }

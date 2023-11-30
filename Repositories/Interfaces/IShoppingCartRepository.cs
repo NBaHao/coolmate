@@ -10,5 +10,6 @@ namespace CoolMate.Repositories.Interfaces
         Task<bool> RemoveCartItemAsync(string userId, int productItemId);
         Task<bool> ReplaceCartItemAsync(string userId, int oldProductItemId, int newProductItemId);
         Task<ShoppingCart> GetFullInfomationAsync(string userId);
+        Task RemoveAllItemsInCartAsync(string userId);
     }
 }

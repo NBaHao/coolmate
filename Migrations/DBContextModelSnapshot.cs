@@ -212,29 +212,6 @@ namespace CoolMate.Migrations
                     b.ToTable("product_item_image", (string)null);
                 });
 
-            modelBuilder.Entity("CoolMate.Models.ShippingFee", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    b.Property<int?>("ShippingAddress")
-                        .HasColumnType("int")
-                        .HasColumnName("shipping_address");
-
-                    b.Property<int?>("Value")
-                        .HasColumnType("int")
-                        .HasColumnName("value");
-
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
-
-                    b.HasIndex(new[] { "ShippingAddress" }, "fk_shippingfee_shipaddress");
-
-                    b.ToTable("shipping_fee", (string)null);
-                });
-
             modelBuilder.Entity("CoolMate.Models.ShopOrder", b =>
                 {
                     b.Property<int>("Id")
@@ -254,9 +231,9 @@ namespace CoolMate.Migrations
                         .HasColumnType("int")
                         .HasColumnName("order_total");
 
-                    b.Property<int?>("PaymentMethodId")
+                    b.Property<int?>("PaymentMethod")
                         .HasColumnType("int")
-                        .HasColumnName("payment_method_id");
+                        .HasColumnName("payment_method");
 
                     b.Property<string>("ShippingAddress")
                         .HasMaxLength(200)
@@ -274,7 +251,7 @@ namespace CoolMate.Migrations
                     b.HasKey("Id")
                         .HasName("PRIMARY");
 
-                    b.HasIndex(new[] { "PaymentMethodId" }, "fk_shoporder_paymethod");
+                    b.HasIndex(new[] { "PaymentMethod" }, "fk_shoporder_paymethod");
 
                     b.HasIndex(new[] { "ShippingMethod" }, "fk_shoporder_shipmethod");
 
@@ -460,6 +437,10 @@ namespace CoolMate.Migrations
                         .HasColumnType("varchar(2000)")
                         .HasColumnName("comment");
 
+                    b.Property<DateTime?>("CreatedDate")
+                        .HasColumnType("datetime(6)")
+                        .HasColumnName("created_date");
+
                     b.Property<int?>("OrderedProductId")
                         .HasColumnType("int")
                         .HasColumnName("ordered_product_id");
@@ -639,16 +620,6 @@ namespace CoolMate.Migrations
                     b.Navigation("ProductItem");
                 });
 
-            modelBuilder.Entity("CoolMate.Models.ShippingFee", b =>
-                {
-                    b.HasOne("CoolMate.Models.Address", "ShippingAddressNavigation")
-                        .WithMany("ShippingFees")
-                        .HasForeignKey("ShippingAddress")
-                        .HasConstraintName("fk_shippingfee_shipaddress");
-
-                    b.Navigation("ShippingAddressNavigation");
-                });
-
             modelBuilder.Entity("CoolMate.Models.ShopOrder", b =>
                 {
                     b.HasOne("CoolMate.Models.SiteUser", "User")
@@ -705,7 +676,7 @@ namespace CoolMate.Migrations
 
             modelBuilder.Entity("CoolMate.Models.UserReview", b =>
                 {
-                    b.HasOne("CoolMate.Models.OrderLine", "OrderedProduct")
+                    b.HasOne("CoolMate.Models.ProductItem", "OrderedProduct")
                         .WithMany("UserReviews")
                         .HasForeignKey("OrderedProductId")
                         .HasConstraintName("fk_review_product");
@@ -718,16 +689,6 @@ namespace CoolMate.Migrations
                     b.Navigation("OrderedProduct");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("CoolMate.Models.Address", b =>
-                {
-                    b.Navigation("ShippingFees");
-                });
-
-            modelBuilder.Entity("CoolMate.Models.OrderLine", b =>
-                {
-                    b.Navigation("UserReviews");
                 });
 
             modelBuilder.Entity("CoolMate.Models.Product", b =>
@@ -747,6 +708,8 @@ namespace CoolMate.Migrations
                     b.Navigation("ProductItemImages");
 
                     b.Navigation("ShoppingCartItems");
+
+                    b.Navigation("UserReviews");
                 });
 
             modelBuilder.Entity("CoolMate.Models.ShopOrder", b =>

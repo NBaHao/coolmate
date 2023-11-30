@@ -19,5 +19,4 @@ public partial class OrderLine
 
     public virtual ProductItem? ProductItem { get; set; }
 
-    public virtual ICollection<UserReview> UserReviews { get; set; } = new List<UserReview>();
 }

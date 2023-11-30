@@ -142,5 +142,16 @@ namespace CoolMate.Repositories
             await _dbContext.SaveChangesAsync();
             return true;
         }
+        public async Task RemoveAllItemsInCartAsync(string userId)
+        {
+            var cart = await GetByUserIdAsync(userId);
+            if (cart == null)
+            {
+                return;
+            }
+
+            _dbContext.ShoppingCartItems.RemoveRange(cart.ShoppingCartItems);
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

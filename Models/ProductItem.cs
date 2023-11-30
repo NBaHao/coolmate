@@ -24,4 +24,5 @@ public partial class ProductItem
     public virtual ICollection<ProductItemImage> ProductItemImages { get; set; } = new List<ProductItemImage>();
 
     public virtual ICollection<ShoppingCartItem> ShoppingCartItems { get; set; } = new List<ShoppingCartItem>();
+    public virtual ICollection<UserReview> UserReviews { get; set; } = new List<UserReview>();
 }

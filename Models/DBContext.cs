@@ -30,8 +30,6 @@ public partial class DBContext : IdentityDbContext<SiteUser>
 
     public virtual DbSet<ProductItemImage> ProductItemImages { get; set; }
 
-    public virtual DbSet<ShippingFee> ShippingFees { get; set; }
-
     public virtual DbSet<ShopOrder> ShopOrders { get; set; }
 
     public virtual DbSet<ShoppingCart> ShoppingCarts { get; set; }
@@ -188,30 +186,13 @@ public partial class DBContext : IdentityDbContext<SiteUser>
                 .HasConstraintName("fk_product_item_id");
         });
 
-        modelBuilder.Entity<ShippingFee>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity.ToTable("shipping_fee");
-
-            entity.HasIndex(e => e.ShippingAddress, "fk_shippingfee_shipaddress");
-
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.ShippingAddress).HasColumnName("shipping_address");
-            entity.Property(e => e.Value).HasColumnName("value");
-
-            entity.HasOne(d => d.ShippingAddressNavigation).WithMany(p => p.ShippingFees)
-                .HasForeignKey(d => d.ShippingAddress)
-                .HasConstraintName("fk_shippingfee_shipaddress");
-        });
-
         modelBuilder.Entity<ShopOrder>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity.ToTable("shop_order");
 
-            entity.HasIndex(e => e.PaymentMethodId, "fk_shoporder_paymethod");
+            entity.HasIndex(e => e.PaymentMethod, "fk_shoporder_paymethod");
 
             entity.HasIndex(e => e.ShippingMethod, "fk_shoporder_shipmethod");
 
@@ -226,7 +207,7 @@ public partial class DBContext : IdentityDbContext<SiteUser>
                 .HasColumnName("order_date");
             entity.Property(e => e.OrderStatus).HasColumnName("order_status");
             entity.Property(e => e.OrderTotal).HasColumnName("order_total");
-            entity.Property(e => e.PaymentMethodId).HasColumnName("payment_method_id");
+            entity.Property(e => e.PaymentMethod).HasColumnName("payment_method");
             entity.Property(e => e.ShippingAddress).HasMaxLength(200).HasColumnName("shipping_address");
             entity.Property(e => e.ShippingMethod).HasColumnName("shipping_method");
             entity.Property(e => e.UserId).HasColumnName("user_id");
@@ -338,6 +319,7 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.Property(e => e.OrderedProductId).HasColumnName("ordered_product_id");
             entity.Property(e => e.RatingValue).HasColumnName("rating_value");
             entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(entity => entity.CreatedDate).HasColumnName("created_date");
 
             entity.HasOne(d => d.OrderedProduct).WithMany(p => p.UserReviews)
                 .HasForeignKey(d => d.OrderedProductId)

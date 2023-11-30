@@ -168,26 +168,6 @@ namespace CoolMate.Migrations
                 .Annotation("MySQL:Charset", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "shipping_fee",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
-                    shipping_address = table.Column<int>(type: "int", nullable: true),
-                    value = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PRIMARY", x => x.id);
-                    table.ForeignKey(
-                        name: "fk_shippingfee_shipaddress",
-                        column: x => x.shipping_address,
-                        principalTable: "address",
-                        principalColumn: "id");
-                })
-                .Annotation("MySQL:Charset", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "product",
                 columns: table => new
                 {
@@ -218,7 +198,7 @@ namespace CoolMate.Migrations
                         .Annotation("MySQL:ValueGenerationStrategy", MySQLValueGenerationStrategy.IdentityColumn),
                     user_id = table.Column<string>(type: "varchar(255)", nullable: true),
                     order_date = table.Column<DateTime>(type: "datetime", nullable: true),
-                    payment_method_id = table.Column<int>(type: "int", nullable: true),
+                    payment_method = table.Column<int>(type: "int", nullable: true),
                     shipping_address = table.Column<string>(type: "varchar(200)", maxLength: 200, nullable: true),
                     shipping_method = table.Column<int>(type: "int", nullable: true),
                     order_total = table.Column<int>(type: "int", nullable: true),
@@ -387,7 +367,8 @@ namespace CoolMate.Migrations
                     user_id = table.Column<string>(type: "varchar(255)", nullable: true),
                     ordered_product_id = table.Column<int>(type: "int", nullable: true),
                     rating_value = table.Column<int>(type: "int", nullable: true),
-                    comment = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: true)
+                    comment = table.Column<string>(type: "varchar(2000)", maxLength: 2000, nullable: true),
+                    created_date = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -395,7 +376,7 @@ namespace CoolMate.Migrations
                     table.ForeignKey(
                         name: "fk_review_product",
                         column: x => x.ordered_product_id,
-                        principalTable: "order_line",
+                        principalTable: "product_item",
                         principalColumn: "id");
                     table.ForeignKey(
                         name: "fk_review_user",
@@ -431,14 +412,9 @@ namespace CoolMate.Migrations
                 column: "product_item_id");
 
             migrationBuilder.CreateIndex(
-                name: "fk_shippingfee_shipaddress",
-                table: "shipping_fee",
-                column: "shipping_address");
-
-            migrationBuilder.CreateIndex(
                 name: "fk_shoporder_paymethod",
                 table: "shop_order",
-                column: "payment_method_id");
+                column: "payment_method");
 
             migrationBuilder.CreateIndex(
                 name: "fk_shoporder_shipmethod",
@@ -495,6 +471,9 @@ namespace CoolMate.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "order_line");
+
+            migrationBuilder.DropTable(
                 name: "product_item_image");
 
             migrationBuilder.DropTable(
@@ -502,9 +481,6 @@ namespace CoolMate.Migrations
 
             migrationBuilder.DropTable(
                 name: "Roles");
-
-            migrationBuilder.DropTable(
-                name: "shipping_fee");
 
             migrationBuilder.DropTable(
                 name: "shopping_cart_item");
@@ -528,16 +504,13 @@ namespace CoolMate.Migrations
                 name: "UserTokens");
 
             migrationBuilder.DropTable(
+                name: "shop_order");
+
+            migrationBuilder.DropTable(
                 name: "shopping_cart");
 
             migrationBuilder.DropTable(
                 name: "address");
-
-            migrationBuilder.DropTable(
-                name: "order_line");
-
-            migrationBuilder.DropTable(
-                name: "shop_order");
 
             migrationBuilder.DropTable(
                 name: "product_item");

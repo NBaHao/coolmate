@@ -14,6 +14,4 @@ public partial class Address
     public string? District { get; set; }
 
     public string? Commune { get; set; }
-
-    public virtual ICollection<ShippingFee> ShippingFees { get; set; } = new List<ShippingFee>();
 }
