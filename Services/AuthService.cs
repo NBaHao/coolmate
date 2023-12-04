@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using CoolMate.Wrappers;
+using StackExchange.Redis;
 
 namespace CoolMate.Services
 {
@@ -19,17 +20,20 @@ namespace CoolMate.Services
         private readonly IMapper _mapper;
         private readonly ITokenService _tokenService;
         private readonly IEmailService _emailService;
+        private readonly IDatabase _redisDatabase;
         public AuthService(IUserRepository userRepository,
             RoleManager<IdentityRole> roleManager,
             ITokenService tokenService,
             IMapper mapper,
-            IEmailService EmailService)
+            IEmailService EmailService,
+            IDatabase redisDatabas)
         {
             _mapper = mapper;
             _userRepository = userRepository;
             _roleManager = roleManager;
             _tokenService = tokenService;
             _emailService = EmailService;
+            _redisDatabase = redisDatabas;
         }
 
         public async Task<Response<string>> Register(RegisterDTO registerDto)
@@ -179,6 +183,20 @@ namespace CoolMate.Services
                 response.Errors = new string[] { result.Errors.ToString() };
                 return response;
             }
+        }
+
+        public async Task<bool> IsTokenBlacklistedAsync(string token)
+        {
+            var redisKey = "BlacklistedTokens:" + token;
+            var isBlacklisted = await _redisDatabase.KeyExistsAsync(redisKey);
+
+            return isBlacklisted;
+        }
+        
+        public async Task BlacklistTokenAsync(string token, TimeSpan timeSpan)
+        {
+            var redisKey = "BlacklistedTokens:" + token;
+            await _redisDatabase.StringSetAsync(redisKey, "true", timeSpan);
         }
     }
 }

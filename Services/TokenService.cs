@@ -29,12 +29,37 @@ namespace CoolMate.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddMinutes(30),
+                Expires = DateTime.Now.AddMinutes(60),
                 SigningCredentials = creds
             };
             var tokenHandler = new JwtSecurityTokenHandler();
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+        public DateTime? GetTokenExpiration(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            if (handler.CanReadToken(token))
+            {
+                var jsonToken = handler.ReadToken(token) as JwtSecurityToken;
+                if (jsonToken != null)
+                {
+                    var expiration = jsonToken.ValidTo;
+                    return expiration;
+                }
+            }
+            return null;
+        }
+
+        public TimeSpan? GetRemainingTime(string token)
+        {
+            var expiration = GetTokenExpiration(token);
+            if (expiration.HasValue)
+            {
+                var remainingTime = expiration.Value - DateTime.UtcNow;
+                return remainingTime;
+            }
+            return null;
         }
     }
 }

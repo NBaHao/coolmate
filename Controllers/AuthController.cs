@@ -11,13 +11,16 @@ namespace CoolMate.Controllers
     {
         private readonly AuthService _authService;
         private readonly IUserRepository _userRepository;
+        private readonly TokenService _tokenService;
 
         public authController(
             AuthService authService,
-            IUserRepository userRepository)
+            IUserRepository userRepository,
+            TokenService tokenService)
         {
             _authService = authService;
             _userRepository = userRepository;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
@@ -109,6 +112,25 @@ namespace CoolMate.Controllers
                 return Ok(res.Data);
             }
             return BadRequest();
+        }
+
+        [Authorize]
+        [HttpPost("logout")]
+        public async Task<ActionResult> Logout()
+        {
+            var token = HttpContext.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
+
+            // Check if the token is already blacklisted
+            var isBlacklisted = await _authService.IsTokenBlacklistedAsync(token);
+            if (isBlacklisted)
+            {
+                return BadRequest("Token already blacklisted");
+            }
+            TimeSpan timeSpan = _tokenService.GetRemainingTime(token).Value;
+            
+            await _authService.BlacklistTokenAsync(token, timeSpan);
+
+            return Ok("Logout successful");
         }
     }
 }
