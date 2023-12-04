@@ -17,7 +17,6 @@ namespace CoolMate.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> getAllCategory()
         {
             return Ok(await _categoryService.getAllCategory());

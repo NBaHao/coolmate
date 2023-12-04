@@ -20,8 +20,7 @@ namespace CoolMate.Services
         public async Task<IEnumerable<CategoryDTO>> getAllCategory()
         {
             var categories = await _categoryRepository.GetCategoriesAsync();
-            var categoryResponses = BuildCategoryTree(categories, null);
-            return categoryResponses;
+            return categories.Select(c => _mapper.Map<CategoryDTO>(c));
         }
 
         public async Task<bool> addCategory(AddCategoryDTO addCategoryDTO)
@@ -55,27 +54,7 @@ namespace CoolMate.Services
             await _categoryRepository.DeleteCategoryAsync(category);
             return true;
         }
-        private List<CategoryDTO> BuildCategoryTree(IEnumerable<ProductCategory> categories, int? parentId)
-        {
-            var categoryDTOs = new List<CategoryDTO>();
-
-            var filteredCategories = categories.Where(c => c.ParentCategoryId == parentId);
-
-            foreach (var category in filteredCategories)
-            {
-                var categoryDTO = new CategoryDTO
-                {
-                    Id = category.Id,
-                    CategoryName = category.CategoryName,
-                    Children = BuildCategoryTree(categories, category.Id),
-                    slug = category.Slug
-                };
-
-                categoryDTOs.Add(categoryDTO);
-            }
-
-            return categoryDTOs;
-        }
+        
         static string ConvertToSlug(string input)
         {
             string normalizedString = input.Normalize(NormalizationForm.FormD);

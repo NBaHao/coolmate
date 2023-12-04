@@ -67,7 +67,7 @@ namespace CoolMate.Controllers
                 Description = p.Description,
                 PriceInt = p.PriceInt,
                 PriceStr = p.PriceStr,
-                Img = p.ProductItems.FirstOrDefault()?.ProductItemImages.FirstOrDefault()?.Url 
+                Img = p.ProductItems.FirstOrDefault()?.ProductItemImages.FirstOrDefault()?.Url
             }).ToList();
 
             return Ok(productDTOs);
@@ -82,7 +82,47 @@ namespace CoolMate.Controllers
 
             var productsWithItemsAndImages = await _productRepository.GetProductsByCategoryAsync(category);
 
+            var data = new List<ProductResDTO>();
+
             foreach (var product in productsWithItemsAndImages)
+            {
+                var productData = new ProductResDTO
+                {
+                    Id = product.Id,
+                    CategoryId = product.CategoryId,
+                    Name = product.Name,
+                    Description = product.Description,
+                    PriceInt = product.PriceInt,
+                    PriceStr = product.PriceStr,
+                    ProductItems = new List<ProductItemResDTO>()
+                };
+                foreach (var productItem in product.ProductItems)
+                {
+                    var productItemData = new ProductItemResDTO
+                    {
+                        Id = productItem.Id,
+                        Color = productItem.Color,
+                        ColorImage = productItem.ColorImage,
+                        Size = productItem.Size,
+                        QtyInStock = productItem.QtyInStock,
+                        ProductItemImages = productItem.ProductItemImages.Select(i => i.Url).ToList()
+                    };
+
+                    productItemData.Sizes = product.ProductItems
+                        .Where(pi => pi.Color == productItem.Color && pi.QtyInStock > 0)
+                        .Select(pi => pi.Size)
+                        .ToList();
+
+                    productItemData.ItemIds = product.ProductItems
+                        .Where(pi => pi.Color == productItem.Color && pi.QtyInStock > 0)
+                        .Select(pi => pi.Id)
+                        .ToList();
+                    productData.ProductItems.Add(productItemData);
+                }
+                data.Add(productData);
+            }
+
+            foreach (var product in data)
             {
                 // Select distinct items based on the "Color" property
                 var uniqueItems = product.ProductItems.GroupBy(i => i.Color).Select(group => group.First()).ToList();
@@ -90,13 +130,13 @@ namespace CoolMate.Controllers
                 product.ProductItems = uniqueItems;
             }
 
-            var totalRecords = productsWithItemsAndImages.Count();
+            var totalRecords = data.Count();
 
-            var data = productsWithItemsAndImages
+            var dataPaged = data
                 .Skip((validFilter.PageNumber - 1) * validFilter.PageSize)
                 .Take(validFilter.PageSize).ToList();
 
-            var reponse = PaginationHelper.CreatePagedReponse(data, validFilter, totalRecords, _uriService, enpointUri);
+            var reponse = PaginationHelper.CreatePagedReponse(dataPaged, validFilter, totalRecords, _uriService, enpointUri);
             return Ok(reponse);
         }
 

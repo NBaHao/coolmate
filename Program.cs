@@ -71,7 +71,7 @@ builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("Emai
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
         o.TokenLifespan = TimeSpan.FromMinutes(10));
 
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect("redis-16954.c295.ap-southeast-1-1.ec2.cloud.redislabs.com:16954,password=cskxzssavPcacYpzvlkBsKoM3BKTsODr"));
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect($"{builder.Configuration["Redis:Host"]}, password = {builder.Configuration["Redis:Password"]}"));
 builder.Services.AddScoped<IDatabase>(provider => provider.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
 
 

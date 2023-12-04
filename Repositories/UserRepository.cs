@@ -196,5 +196,10 @@ namespace CoolMate.Repositories
 
             return false;
         }
+        public async Task<bool> isAdmin(SiteUser user)
+        {
+            //check if user have role admin
+            return await _userManager.IsInRoleAsync(user, "Admin");
+        }
     }
 }

@@ -86,9 +86,9 @@ namespace CoolMate.Services
             response.Data = "successfully";
             return response;
         }
-        public async Task<Response<string>> Login(LoginDTO loginDTO)
+        public async Task<Response<TMP>> Login(LoginDTO loginDTO)
         {
-            var response = new Response<string>();
+            var response = new Response<TMP>();
             var user = await _userRepository.FindByEmailAsync(loginDTO.Email);
             if (user == null)
             {
@@ -103,7 +103,8 @@ namespace CoolMate.Services
                 response.ErrorCode = 401;
                 return response;
             }
-            response.Data = await _tokenService.CreateToken(user);
+            var res = new TMP { token = await _tokenService.CreateToken(user), isAdmin = await _userRepository.isAdmin(user) };
+            response.Data = res;
             return response;
         }
 
@@ -148,7 +149,7 @@ namespace CoolMate.Services
             var token = await _userRepository.GeneratePasswordResetTokenAsync(user);
 
             //send email
-            var resetLink = $"https://your-website.com/resetpassword?email={Uri.EscapeDataString(forgotPasswordDto.Email)}&token={token}";
+            var resetLink = $"http://localhost:3000/recovery/{Uri.EscapeDataString(forgotPasswordDto.Email)}?token={Uri.EscapeDataString(token)}";
             var emailBody = $"Click <a href=\"{resetLink}\">here</a> to reset your password.";
 
             Mailrequest mailrequest = new Mailrequest();
@@ -157,7 +158,7 @@ namespace CoolMate.Services
             mailrequest.Body = emailBody;
             await _emailService.SendEmailAsync(mailrequest);
 
-            response.Data = "Password reset token sent successfully/" + token;
+            response.Data = "Password reset token sent successfully";
             return response;
         }
         public async Task<Response<string>> ResetPassword(ResetPasswordDTO resetPasswordDto)
@@ -192,11 +193,17 @@ namespace CoolMate.Services
 
             return isBlacklisted;
         }
-        
+
         public async Task BlacklistTokenAsync(string token, TimeSpan timeSpan)
         {
             var redisKey = "BlacklistedTokens:" + token;
             await _redisDatabase.StringSetAsync(redisKey, "true", timeSpan);
         }
+    }
+
+    public class TMP
+    {
+        public string token { get; set; }
+        public bool isAdmin { get; set; }
     }
 }

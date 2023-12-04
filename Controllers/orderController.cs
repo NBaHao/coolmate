@@ -1,6 +1,8 @@
 ﻿using CoolMate.DTO;
 using CoolMate.Models;
+using CoolMate.Models.Payment;
 using CoolMate.Repositories.Interfaces;
+using CoolMate.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -113,8 +115,29 @@ namespace CoolMate.Controllers
                 OrderTotal = shoppingCart.ShoppingCartItems.Sum(sci => sci.ProductItem.Product.PriceInt * sci.Qty)
             };
             await _shopOrderRepository.createShopOrderAsync(order);
-            await _shoppingCartRepository.RemoveAllItemsInCartAsync(userId);
+            switch (createOrderDTO.paymentMethod)
+            {
+                case 0:
+                    await _shoppingCartRepository.RemoveAllItemsInCartAsync(userId);
+                    return Ok("successfully");
+                case 1:
+                    var momoPayment = new MomoPayment();
+                    var res = await momoPayment.CreatePaymentAsync(order);
+                    return Ok(res);
+                case 2:
+                    break;
+                default:
+                    break;
+            }
             return Ok("successfully");
+
+        }
+
+        [HttpPost("momoNotify")]
+        public async Task<ActionResult> MomoNotify([FromBody] MomoOneTimePaymentResultRequest values)
+        {
+            System.Console.WriteLine(values.resultCode);
+            return Ok();
         }
 
     }
