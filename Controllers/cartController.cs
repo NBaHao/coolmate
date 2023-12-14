@@ -66,7 +66,7 @@ namespace CoolMate.Controllers
 
         [Authorize]
         [HttpDelete("removeCartItem")]
-        public async Task<ActionResult> RemoveCartItem([FromBody] int productItemId)
+        public async Task<ActionResult> RemoveCartItem([FromQuery] int productItemId)
         {
             var res = await _shoppingCartRepository.RemoveCartItemAsync(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, productItemId);
             if (res) return Ok("successfully");
