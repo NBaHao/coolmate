@@ -14,6 +14,7 @@ namespace CoolMate.Controllers
     {
         private readonly IShopOrderRepository _shopOrderRepository;
         private readonly IShoppingCartRepository _shoppingCartRepository;
+        private readonly IProductItemRepository _productItemRepository;
         public orderController(IShopOrderRepository shopOrderRepository, IShoppingCartRepository shoppingCartRepository)
         {
             _shopOrderRepository = shopOrderRepository;
@@ -133,10 +134,19 @@ namespace CoolMate.Controllers
 
         }
 
-        [HttpPost("momoNotify")]
-        public async Task<ActionResult> MomoNotify([FromBody] MomoOneTimePaymentResultRequest values)
+        [HttpPost("confirmMomoPayment")]
+        [Authorize]
+        public async Task<ActionResult> MomoNotify([FromQuery] ConfirmMomoPayment values)
         {
-            System.Console.WriteLine(values.resultCode);
+            if (!values.IsValidSignature())
+                return BadRequest("invalid signature");
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var order = await _shopOrderRepository.GetByIdAsync(int.Parse(values.orderId.Split(":")[0]));
+            if (order == null)
+                return NotFound("order not found");
+            _shopOrderRepository.updateOrderStatusAsync(order.Id, 1);
+            await _shoppingCartRepository.RemoveAllItemsInCartAsync(userId);
+            await _productItemRepository.UpdateQtyInStockAsync(order.OrderLines.ToList());
             return Ok();
         }
 

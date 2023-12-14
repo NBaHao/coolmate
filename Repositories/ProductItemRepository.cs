@@ -34,5 +34,15 @@ namespace CoolMate.Repositories
             _dbContext.ProductItems.Update(productItem);
             await _dbContext.SaveChangesAsync();
         }
+        public async Task UpdateQtyInStockAsync(List<OrderLine> ordersLine)
+        {
+            foreach (var orderLine in ordersLine)
+            {
+                var productItem = await _dbContext.ProductItems.FindAsync(orderLine.ProductItemId);
+                productItem.QtyInStock -= orderLine.Qty;
+                _dbContext.ProductItems.Update(productItem);
+            }
+            await _dbContext.SaveChangesAsync();
+        }
     }
 }

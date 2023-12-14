@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace CoolMate.Models.Payment
 {
     [BindProperties]
-    public class MomoOneTimePaymentResultRequest
+    public class ConfirmMomoPayment
     {
         public string? partnerCode { get; set; } = string.Empty;
         public string? orderId { get; set; } = string.Empty;
@@ -20,8 +20,10 @@ namespace CoolMate.Models.Payment
         public string? extraData { get; set; } = string.Empty;
         public string? signature { get; set; } = string.Empty;
 
-        public bool IsValidSignature(string accessKey, string secretKey)
+        public bool IsValidSignature()
         {
+            var accessKey = System.Configuration.ConfigurationManager.AppSettings["Momo:AccessKey"];
+            var secretKey = System.Configuration.ConfigurationManager.AppSettings["Momo:SecretKey"];
             var rawHash = "accessKey=" + accessKey +
                    "&amount=" + this.amount +
                    "&extraData=" + this.extraData +

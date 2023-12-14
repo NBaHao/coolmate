@@ -78,7 +78,7 @@ namespace CoolMate.Controllers
 
         [HttpPost("makeAddressDefault")]
         [Authorize]
-        public async Task<ActionResult> MakeUserAddressDefault([FromBody] int addressId )
+        public async Task<ActionResult> MakeUserAddressDefault([FromQuery] int addressId )
         {
             var res = await _userRepository.MakeUserAddressDefaultAsync(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, addressId);
             if (res) return Ok(res);
