@@ -64,5 +64,10 @@ namespace CoolMate.Repositories
             if (order == null) return false;
             return order.OrderLines.Any(x => x.ProductItem.Id == ProductItemId);
         }
+        public async Task RemoveOrderAsync(ShopOrder order)
+        {
+            _context.ShopOrders.Remove(order);
+            await _context.SaveChangesAsync();
+        }
     }
 }

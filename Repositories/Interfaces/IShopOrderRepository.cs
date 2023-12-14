@@ -10,5 +10,6 @@ namespace CoolMate.Repositories.Interfaces
         Task createShopOrderAsync(ShopOrder shopOrder);
         Task<bool> updateOrderStatusAsync(int orderId, int status);
         Task<bool> IsProductItemOrderedAsync(string? userId, int? ProductId);
+        Task RemoveOrderAsync(ShopOrder order);
     }
 }

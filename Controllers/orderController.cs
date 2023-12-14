@@ -140,15 +140,35 @@ namespace CoolMate.Controllers
         {
             if (!values.IsValidSignature())
                 return BadRequest("invalid signature");
+
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var order = await _shopOrderRepository.GetByIdAsync(int.Parse(values.orderId.Split(":")[0]));
             if (order == null)
                 return NotFound("order not found");
+            if (values.resultCode != 0)
+            {
+                await _shopOrderRepository.RemoveOrderAsync(order);
+                return Ok("payment failed");
+            }
             _shopOrderRepository.updateOrderStatusAsync(order.Id, 1);
             await _shoppingCartRepository.RemoveAllItemsInCartAsync(userId);
             await _productItemRepository.UpdateQtyInStockAsync(order.OrderLines.ToList());
             return Ok();
         }
 
+        [HttpDelete("cancelOrder")]
+        [Authorize]
+        public async Task<ActionResult> CancelOrder([FromQuery] int orderId)
+        {
+            var order = await _shopOrderRepository.GetByIdAsync(orderId);
+            if (order == null)
+                return NotFound("order not found");
+            if (order.OrderStatus != 0)
+                return BadRequest("order can't be cancelled");
+            if (order.UserId != User.FindFirst(ClaimTypes.NameIdentifier)?.Value)
+                return BadRequest("you can't cancel this order");
+            await _shopOrderRepository.updateOrderStatusAsync(orderId, 2);
+            return Ok("successfully");
+        }
     }
 }
