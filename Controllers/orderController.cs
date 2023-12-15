@@ -34,6 +34,9 @@ namespace CoolMate.Controllers
                 OrderStatus = o.OrderStatus,
                 PaymentMethod = o.PaymentMethod,
                 ShippingAddress = o.ShippingAddress,
+                Name = o.Name,
+                Phone = o.Phone,
+                Email = o.Email,
                 ShippingMethod = o.ShippingMethod,
                 OrderTotal = o.OrderTotal,
                 OrderLines = o.OrderLines.Select(ol => new OrderLineDTO
@@ -64,6 +67,9 @@ namespace CoolMate.Controllers
                 OrderStatus = o.OrderStatus,
                 PaymentMethod = o.PaymentMethod,
                 ShippingAddress = o.ShippingAddress,
+                Name = o.Name,
+                Phone = o.Phone,
+                Email = o.Email,
                 ShippingMethod = o.ShippingMethod,
                 OrderTotal = o.OrderTotal,
                 OrderLines = o.OrderLines.Select(ol => new OrderLineDTO
@@ -106,6 +112,9 @@ namespace CoolMate.Controllers
                 OrderStatus = 0,
                 PaymentMethod = createOrderDTO.paymentMethod,
                 ShippingAddress = createOrderDTO.shippingAddress,
+                Name = createOrderDTO.name,
+                Phone = createOrderDTO.phone,
+                Email = createOrderDTO.email,
                 ShippingMethod = createOrderDTO.shippingMethod,
                 OrderLines = shoppingCart.ShoppingCartItems.Select(sci => new OrderLine
                 {

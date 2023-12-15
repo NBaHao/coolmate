@@ -14,6 +14,9 @@ public partial class ShopOrder
     public int? PaymentMethod { get; set; }
 
     public String? ShippingAddress { get; set; }
+    public String? Name { get; set; } 
+    public String? Phone { get; set; } 
+    public String? Email { get; set; }
 
     public int? ShippingMethod { get; set; }
 

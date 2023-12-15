@@ -54,7 +54,6 @@ namespace CoolMate.Controllers
             switch (period)
             {
                 case "daily":
-                    //get data of 6 days ago, each day will be a OneSaleStatisticDTO
                     var sixDaysAgo = DateTime.Now.AddDays(-6);
                     response.data = orders.Where(o => o.OrderDate >= sixDaysAgo).GroupBy(o => new { o.OrderDate.Value.Date, o.OrderDate.Value.Month, o.OrderDate.Value.Year }).Select(g => new OneSaleStatisticDTO
                     {
@@ -65,8 +64,7 @@ namespace CoolMate.Controllers
 
                     break;
                 case "weekly":
-                    // get data of 6 weeks ago, each week will be a OneSaleStatisticDTO, current week may not be full
-                    var sixWeeksAgo = DateTime.Now.AddDays(-42); // Assuming a week is 7 days
+                    var sixWeeksAgo = DateTime.Now.AddDays(-42); 
                     response.data = orders
                         .Where(o => o.OrderDate >= sixWeeksAgo)
                         .GroupBy(o => new { WeekStart = o.OrderDate.Value.Date.AddDays(-((int)o.OrderDate.Value.DayOfWeek - 1)), o.OrderDate.Value.Month, o.OrderDate.Value.Year })
@@ -79,7 +77,6 @@ namespace CoolMate.Controllers
                         .ToList();
                     break;
                 case "monthly":
-                    //get data of 6 month ago, each week will be a OneSaleStatisticDTO, current month may not be full
                     var sixMonthsAgo = DateTime.Now.AddMonths(-6);
                     response.data = orders.Where(o => o.OrderDate >= sixMonthsAgo).GroupBy(o => new { o.OrderDate.Value.Month, o.OrderDate.Value.Year }).Select(g => new OneSaleStatisticDTO
                     {

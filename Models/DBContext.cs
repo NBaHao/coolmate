@@ -209,6 +209,9 @@ public partial class DBContext : IdentityDbContext<SiteUser>
             entity.Property(e => e.OrderTotal).HasColumnName("order_total");
             entity.Property(e => e.PaymentMethod).HasColumnName("payment_method");
             entity.Property(e => e.ShippingAddress).HasMaxLength(200).HasColumnName("shipping_address");
+            entity.Property(e => e.Name).HasMaxLength(200).HasColumnName("name");
+            entity.Property(e => e.Phone).HasMaxLength(10).HasColumnName("phone");
+            entity.Property(e => e.Email).HasMaxLength(200).HasColumnName("email");
             entity.Property(e => e.ShippingMethod).HasColumnName("shipping_method");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
