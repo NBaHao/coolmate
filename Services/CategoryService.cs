@@ -17,10 +17,11 @@ namespace CoolMate.Services
             _categoryRepository = categoryRepository;
             _mapper = mapper;
         }
-        public async Task<IEnumerable<CategoryDTO>> getAllCategory()
+        public async Task<IEnumerable<CategoryTreeDTO>> getAllCategory()
         {
             var categories = await _categoryRepository.GetCategoriesAsync();
-            return categories.Select(c => _mapper.Map<CategoryDTO>(c));
+            var categoryResponses = BuildCategoryTree(categories, null);
+            return categoryResponses;
         }
 
         public async Task<bool> addCategory(AddCategoryDTO addCategoryDTO)
@@ -72,6 +73,27 @@ namespace CoolMate.Services
             string slug = stringBuilder.ToString().ToLower().Replace(' ', '-');
 
             return slug;
+        }
+        private List<CategoryTreeDTO> BuildCategoryTree(IEnumerable<ProductCategory> categories, int? parentId)
+        {
+            var categoryDTOs = new List<CategoryTreeDTO>();
+
+            var filteredCategories = categories.Where(c => c.ParentCategoryId == parentId);
+
+            foreach (var category in filteredCategories)
+            {
+                var categoryDTO = new CategoryTreeDTO
+                {
+                    Id = category.Id,
+                    CategoryName = category.CategoryName,
+                    Children = BuildCategoryTree(categories, category.Id),
+                    Slug = category.Slug
+                };
+
+                categoryDTOs.Add(categoryDTO);
+            }
+
+            return categoryDTOs;
         }
     }
 }
