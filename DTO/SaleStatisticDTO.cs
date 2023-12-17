@@ -4,7 +4,7 @@
     {
         public long total { get; set; }
         public int count { get; set; }
-        public string time { get; set; }
+        public DateTime time { get; set; }
     }
     public class SaleStatisticDTO
     {

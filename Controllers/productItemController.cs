@@ -42,6 +42,19 @@ namespace CoolMate.Controllers
             return Ok("successfully");
         }
 
+        [HttpPut("updateQtyOfListItem")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> UpdateQtyOfListItem([FromBody] List<UpdateQtyInStockDTO> list)
+        {
+            foreach(var item in list)
+            {
+                var productItem = await _productItemRepository.GetProductItemByIdAsync(item.ProductItemId);
+                productItem.QtyInStock = item.newQty;
+                await _productItemRepository.UpdateProductItemAsync(productItem);
+            }
+            return Ok("successfully");
+        }
+
         [HttpPost("add")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> AddProductItem([FromForm] CreateProductItemDTO createProductItem)

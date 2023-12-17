@@ -2,6 +2,8 @@
 using CoolMate.Repositories.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using System.Globalization;
 
 namespace CoolMate.Controllers
 {
@@ -37,8 +39,8 @@ namespace CoolMate.Controllers
                 TotalSales = orders.Sum(o => (long)o.OrderTotal),
                 TotalOrders = orders.Count()
             };
-            response.CompletedPercentage = orders.Where(o => o.OrderStatus == 1).Count() / response.TotalOrders;
-            response.CancelledPercentage = orders.Where(o => o.OrderStatus == 2).Count() / response.TotalOrders;
+            response.CompletedPercentage = orders.Where(o => o.OrderStatus == 1).Count() / response.TotalOrders * 100;
+            response.CancelledPercentage = orders.Where(o => o.OrderStatus == 2).Count() / response.TotalOrders * 100;
             return Ok(response);
         }
 
@@ -55,35 +57,39 @@ namespace CoolMate.Controllers
             {
                 case "daily":
                     var sixDaysAgo = DateTime.Now.AddDays(-6);
-                    response.data = orders.Where(o => o.OrderDate >= sixDaysAgo).GroupBy(o => new { o.OrderDate.Value.Date, o.OrderDate.Value.Month, o.OrderDate.Value.Year }).Select(g => new OneSaleStatisticDTO
+                    response.data = orders.Where(o => o.OrderDate >= sixDaysAgo && o.OrderDate <= DateTime.Now)
+                        .GroupBy(o => new { o.OrderDate.Value.Date, o.OrderDate.Value.Month, o.OrderDate.Value.Year })
+                        .Select(g => new OneSaleStatisticDTO
                     {
                         total = g.Sum(x => (long)x.OrderTotal),
                         count = g.Count(),
-                        time = g.Key.Date.ToString() + "/" + g.Key.Month.ToString() + "/" + g.Key.Year.ToString()
-                    }).ToList();
+                        time = new DateTime(g.Key.Year, g.Key.Month, g.Key.Date.Day)
+                    }).OrderByDescending(o => o.time)
+                    .ToList();
 
                     break;
                 case "weekly":
                     var sixWeeksAgo = DateTime.Now.AddDays(-42); 
                     response.data = orders
-                        .Where(o => o.OrderDate >= sixWeeksAgo)
-                        .GroupBy(o => new { WeekStart = o.OrderDate.Value.Date.AddDays(-((int)o.OrderDate.Value.DayOfWeek - 1)), o.OrderDate.Value.Month, o.OrderDate.Value.Year })
+                        .Where(o => o.OrderDate >= sixWeeksAgo && o.OrderDate <= DateTime.Now)
+                        .GroupBy(o => new { WeekofYear = CultureInfo.CurrentCulture.Calendar.GetWeekOfYear(o.OrderDate.Value, CalendarWeekRule.FirstDay, DayOfWeek.Monday), o.OrderDate.Value.Year })
                         .Select(g => new OneSaleStatisticDTO
                         {
                             total = g.Sum(x => (long)x.OrderTotal),
                             count = g.Count(),
-                            time = $"{g.Key.WeekStart}/{g.Key.Month}/{g.Key.Year}"
-                        })
+                            time = new DateTime(g.Key.Year, 1, 1).AddDays((g.Key.WeekofYear - 1) * 7)
+                        }).OrderByDescending(o => o.time)
                         .ToList();
                     break;
                 case "monthly":
                     var sixMonthsAgo = DateTime.Now.AddMonths(-6);
-                    response.data = orders.Where(o => o.OrderDate >= sixMonthsAgo).GroupBy(o => new { o.OrderDate.Value.Month, o.OrderDate.Value.Year }).Select(g => new OneSaleStatisticDTO
+                    response.data = orders.Where(o => o.OrderDate >= sixMonthsAgo && o.OrderDate <= DateTime.Now).GroupBy(o => new { o.OrderDate.Value.Month, o.OrderDate.Value.Year }).Select(g => new OneSaleStatisticDTO
                     {
                         total = g.Sum(x => (long)x.OrderTotal),
                         count = g.Count(),
-                        time = g.Key.Month.ToString() + "/" + g.Key.Year.ToString()
-                    }).ToList();
+                        time = new DateTime(g.Key.Year, g.Key.Month, 1)
+                    }).OrderByDescending(o => o.time)
+                    .ToList();
                     break;
                 default:
                     break;

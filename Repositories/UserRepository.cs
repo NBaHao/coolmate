@@ -201,5 +201,9 @@ namespace CoolMate.Repositories
             //check if user have role admin
             return await _userManager.IsInRoleAsync(user, "Admin");
         }
+        public async Task<IEnumerable<SiteUser>> GetAllUsersAsync()
+        {
+            return await _dbContext.Users.ToListAsync();
+        }
     }
 }

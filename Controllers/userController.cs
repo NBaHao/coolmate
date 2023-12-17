@@ -104,5 +104,13 @@ namespace CoolMate.Controllers
             if (res) return Ok(res);
             return BadRequest(res);
         }
+
+        [HttpGet("getAllUser")]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult> GetAllUser()
+        {
+            IEnumerable<UserInfoDTO> response = (await _userRepository.GetAllUsersAsync()).Select(user => new UserInfoDTO(user));
+            return Ok(response);
+        }
     }
 }

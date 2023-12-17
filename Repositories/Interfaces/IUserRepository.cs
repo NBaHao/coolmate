@@ -23,5 +23,6 @@ namespace CoolMate.Repositories.Interfaces
         Task<bool> DeleteUserAddressAsync(SiteUser user, int addressId);
         Task<bool> UpdateUserAddressAsync(SiteUser user, AddressDTO updatedAddress);
         Task<bool> isAdmin(SiteUser user);
+        Task<IEnumerable<SiteUser>> GetAllUsersAsync();
     }
 }
