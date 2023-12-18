@@ -24,7 +24,10 @@ namespace CoolMate.Controllers
             var response = orders.SelectMany(o => o.OrderLines).GroupBy(ol => ol.ProductItemId).Select(g => new
             {
                 ProductItemId = g.Key,
-                Quantity = g.Sum(x => x.Qty)
+                Quantity = g.Sum(x => x.Qty),
+                Name = g.FirstOrDefault().ProductItem.Product.Name,
+                Image = g.FirstOrDefault().ProductItem.ProductItemImages.FirstOrDefault().Url,
+                Price = g.FirstOrDefault().ProductItem.Product.PriceStr
             }).OrderByDescending(x => x.Quantity).Take(5);
             return Ok(response);
         }
