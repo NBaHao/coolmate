@@ -19,7 +19,8 @@ namespace CoolMate.Repositories
 
         public async Task<bool> DeleteProductAsync(int productId)
         {
-            //
+            _dbContext.Products.Remove(await _dbContext.Products.FindAsync(productId));
+            await _dbContext.SaveChangesAsync();
             return true;
         }
 
@@ -39,10 +40,17 @@ namespace CoolMate.Repositories
 
         public async Task<List<Product>> GetProductsByCategoryAsync(string category)
         {
+            var parentCateId = (await _dbContext.ProductCategories
+                .Where(cate => cate.Slug == category)
+                .FirstOrDefaultAsync()).Id;
+            var listChildCate = await _dbContext.ProductCategories
+                .Where(cate => cate.ParentCategoryId == parentCateId || cate.Id == parentCateId)
+                .Select(cate => cate.Slug)
+                .ToListAsync();  
             return await _dbContext.Products
                         .Include(p => p.ProductItems)
                         .ThenInclude(pi => pi.ProductItemImages)
-                        .Where(p => p.Category.Slug == category)
+                        .Where(p => listChildCate.Contains(p.Category.Slug))
                         .ToListAsync();
         }
 
@@ -56,59 +64,67 @@ namespace CoolMate.Repositories
         }
 
         public async Task<bool> UpdateProductAsync(Product product)
-        { 
+        {
             var res = _dbContext.Products.Update(product);
             await _dbContext.SaveChangesAsync();
-            if (res != null) return true; 
+            if (res != null) return true;
             return false;
         }
 
         public async Task<List<Product>> GetProductsByCategoryWithFilterAsync(string category, string filter)
         {
+            var parentCateId = (await _dbContext.ProductCategories
+                .Where(cate => cate.Slug == category)
+                .FirstOrDefaultAsync()).Id;
+            var listChildCate = await _dbContext.ProductCategories
+                .Where(cate => cate.ParentCategoryId == parentCateId || cate.Id == parentCateId)
+                .Select(cate => cate.Slug)
+                .ToListAsync();
+
             switch (filter)
             {
                 case "gia-thap-den-cao":
                     return await _dbContext.Products
                         .Include(p => p.ProductItems)
                         .ThenInclude(pi => pi.ProductItemImages)
-                        .Where(p => p.Category.Slug == category)
+                        .Where(p => listChildCate.Contains(p.Category.Slug))
                         .OrderBy(p => p.PriceInt)
                         .ToListAsync();
-                    case "gia-cao-den-thap":
+                case "gia-cao-den-thap":
                     return await _dbContext.Products
                         .Include(p => p.ProductItems)
                         .ThenInclude(pi => pi.ProductItemImages)
-                        .Where(p => p.Category.Slug == category)
+                        .Where(p => listChildCate.Contains(p.Category.Slug))
                         .OrderByDescending(p => p.PriceInt)
                         .ToListAsync();
-                    case "a-z":
+                case "a-z":
                     return await _dbContext.Products
                         .Include(p => p.ProductItems)
                         .ThenInclude(pi => pi.ProductItemImages)
-                        .Where(p => p.Category.Slug == category)
+                        .Where(p => listChildCate.Contains(p.Category.Slug))
                         .OrderBy(p => p.Name)
                         .ToListAsync();
-                    case "z-a":
+                case "z-a":
                     return await _dbContext.Products
                         .Include(p => p.ProductItems)
                         .ThenInclude(pi => pi.ProductItemImages)
-                        .Where(p => p.Category.Slug == category)
+                        .Where(p => listChildCate.Contains(p.Category.Slug))
                         .OrderByDescending(p => p.Name)
                         .ToListAsync();
                 case "ban-chay":
                     return await _dbContext.OrderLines
                         .Include(ol => ol.ProductItem)
                         .ThenInclude(pi => pi.Product)
-                        .Where(ol => ol.ProductItem.Product.Category.Slug == category)
+                        .Where(ol => listChildCate.Contains(p.Category.Slug))
                         .GroupBy(ol => ol.ProductItem.Product)
                         .OrderByDescending(g => g.Count())
                         .Select(g => g.Key)
                         .ToListAsync();
-                    default:
+                default:
                     return await _dbContext.Products
                         .Include(p => p.ProductItems)
                         .ThenInclude(pi => pi.ProductItemImages)
-                        .Where(p => p.Category.Slug == category)
+                        .Where(p => listChildCate.Contains(p.Category.Slug))
                         .ToListAsync();
             }
         }
