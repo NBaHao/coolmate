@@ -115,7 +115,7 @@ namespace CoolMate.Repositories
                     return await _dbContext.OrderLines
                         .Include(ol => ol.ProductItem)
                         .ThenInclude(pi => pi.Product)
-                        .Where(ol => listChildCate.Contains(p.Category.Slug))
+                        .Where(ol => listChildCate.Contains(ol.ProductItem.Product.Category.Slug))
                         .GroupBy(ol => ol.ProductItem.Product)
                         .OrderByDescending(g => g.Count())
                         .Select(g => g.Key)

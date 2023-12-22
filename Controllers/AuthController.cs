@@ -1,8 +1,12 @@
 ﻿using CoolMate.DTO;
 using CoolMate.Repositories.Interfaces;
 using CoolMate.Services;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+using CoolMate.Models;
 
 namespace CoolMate.Controllers
 {
@@ -62,6 +66,49 @@ namespace CoolMate.Controllers
                 if (res.ErrorCode == 401) return Unauthorized(res.Errors);
             }
             return BadRequest();
+        }
+
+        [HttpGet("google-login")]
+        public IActionResult Login()
+        {
+            var authenticationProperties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action(nameof(HandleGoogleLogin))
+            };
+
+            return Challenge(authenticationProperties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        [HttpGet("signin-google")]
+        public async Task<IActionResult> HandleGoogleLogin()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(GoogleDefaults.AuthenticationScheme);
+
+            if (!authenticateResult.Succeeded)
+            {
+                return BadRequest("Google authentication failed.");
+            }
+
+            var email = authenticateResult.Principal.FindFirst(ClaimTypes.Email)?.Value;
+
+            // Check if the user already exists in the database
+            var existingUser = await _userRepository.IsUserExists(email);
+                
+            if (existingUser == false)
+            {
+                // Create a new user in the database
+                var newUser = new SiteUser
+                { 
+                    Email = email,
+                    Name = authenticateResult.Principal.FindFirst(ClaimTypes.Name)?.Value
+                };
+
+                await _authService.Register(new RegisterDTO { Email = email, Password = "anhyeuem"});
+            }
+
+            var res = await _authService.GoogleLogin(email);
+
+            return Ok(res.Data);
         }
 
         [Authorize]

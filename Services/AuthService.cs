@@ -108,6 +108,16 @@ namespace CoolMate.Services
             return response;
         }
 
+        public async Task<Response<TMP>> GoogleLogin(string email)
+        {
+            var response = new Response<TMP>();
+            var user = await _userRepository.FindByEmailAsync(email);
+            
+            var res = new TMP { token = await _tokenService.CreateToken(user), isAdmin = await _userRepository.isAdmin(user) };
+            response.Data = res;
+            return response;
+        }
+
         public async Task<Response<string>> ChangePassword(SiteUser user, ChangePasswordDTO changePasswordDto)
         {
             var response = new Response<string>();
