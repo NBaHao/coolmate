@@ -44,5 +44,19 @@ namespace CoolMate.Repositories
             }
             await _dbContext.SaveChangesAsync();
         }
+        public async Task<List<getAllItemDTO>> GetProductItemsAsync()
+        {
+            return await _dbContext.ProductItems.Include(pi => pi.Product).Select(pi => new getAllItemDTO
+            {
+                Id = pi.Id,
+                ProductId = pi.ProductId,
+                name = pi.Product.Name,
+                Size = pi.Size,
+                Color = pi.Color,
+                ColorImage = pi.ColorImage,
+                QtyInStock = pi.QtyInStock,
+                priceStr = pi.Product.PriceStr
+            }).ToListAsync();
+        }
     }
 }

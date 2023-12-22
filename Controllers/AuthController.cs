@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using CoolMate.Models;
+using static System.Net.WebRequestMethods;
 
 namespace CoolMate.Controllers
 {
@@ -108,7 +109,7 @@ namespace CoolMate.Controllers
 
             var res = await _authService.GoogleLogin(email);
 
-            return Ok(res.Data);
+            return Redirect($"http://localhost:3000/sign-in?token={res.Data.token}&isAdmin={res.Data.isAdmin}");
         }
 
         [Authorize]

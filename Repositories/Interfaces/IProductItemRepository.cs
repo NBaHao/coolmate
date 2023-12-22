@@ -10,5 +10,6 @@ namespace CoolMate.Repositories.Interfaces
         Task DeleteProductItemAsync(ProductItem productItem);
         Task CreateProductItemAsync(ProductItem productItem);
         Task UpdateQtyInStockAsync(List<OrderLine> ordersLine);
+        Task<List<getAllItemDTO>> GetProductItemsAsync();
     }
 }

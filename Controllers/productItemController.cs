@@ -21,6 +21,14 @@ namespace CoolMate.Controllers
             _cloudinaryService = cloudinaryService;
         }
 
+        [HttpGet()]
+        //[Authorize(Roles = "admin")]
+        public async Task<ActionResult> GetAll()
+        {
+            var productItems = await _productItemRepository.GetProductItemsAsync();
+            return Ok(productItems);
+        }
+
         [HttpGet("{id}")]
         [Authorize(Roles = "admin")]
         public async Task<ActionResult> Get(int id)
