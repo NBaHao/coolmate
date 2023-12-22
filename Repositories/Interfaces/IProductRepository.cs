@@ -11,5 +11,6 @@ namespace CoolMate.Repositories.Interfaces
         Task<bool> DeleteProductAsync(int productId);
         Task<bool> UpdateProductAsync(Product product);
         Task<List<Product>> GetAllProducts();
+        Task<List<Product>> GetProductsByCategoryWithFilterAsync(string category, string filter);
     }
 }

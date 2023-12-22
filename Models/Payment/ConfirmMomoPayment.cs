@@ -22,8 +22,8 @@ namespace CoolMate.Models.Payment
 
         public bool IsValidSignature()
         {
-            var accessKey = System.Configuration.ConfigurationManager.AppSettings["Momo:AccessKey"];
-            var secretKey = System.Configuration.ConfigurationManager.AppSettings["Momo:SecretKey"];
+            var accessKey = "F8BBA842ECF85";
+            var secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
             var rawHash = "accessKey=" + accessKey +
                    "&amount=" + this.amount +
                    "&extraData=" + this.extraData +

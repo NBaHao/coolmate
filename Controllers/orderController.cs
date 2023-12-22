@@ -15,10 +15,11 @@ namespace CoolMate.Controllers
         private readonly IShopOrderRepository _shopOrderRepository;
         private readonly IShoppingCartRepository _shoppingCartRepository;
         private readonly IProductItemRepository _productItemRepository;
-        public orderController(IShopOrderRepository shopOrderRepository, IShoppingCartRepository shoppingCartRepository)
+        public orderController(IShopOrderRepository shopOrderRepository, IShoppingCartRepository shoppingCartRepository, IProductItemRepository productItemRepository)
         {
             _shopOrderRepository = shopOrderRepository;
             _shoppingCartRepository = shoppingCartRepository;
+            _productItemRepository = productItemRepository;
         }
 
         [HttpGet("getAll")]

@@ -62,5 +62,55 @@ namespace CoolMate.Repositories
             if (res != null) return true; 
             return false;
         }
+
+        public async Task<List<Product>> GetProductsByCategoryWithFilterAsync(string category, string filter)
+        {
+            switch (filter)
+            {
+                case "gia-thap-den-cao":
+                    return await _dbContext.Products
+                        .Include(p => p.ProductItems)
+                        .ThenInclude(pi => pi.ProductItemImages)
+                        .Where(p => p.Category.Slug == category)
+                        .OrderBy(p => p.PriceInt)
+                        .ToListAsync();
+                    case "gia-cao-den-thap":
+                    return await _dbContext.Products
+                        .Include(p => p.ProductItems)
+                        .ThenInclude(pi => pi.ProductItemImages)
+                        .Where(p => p.Category.Slug == category)
+                        .OrderByDescending(p => p.PriceInt)
+                        .ToListAsync();
+                    case "a-z":
+                    return await _dbContext.Products
+                        .Include(p => p.ProductItems)
+                        .ThenInclude(pi => pi.ProductItemImages)
+                        .Where(p => p.Category.Slug == category)
+                        .OrderBy(p => p.Name)
+                        .ToListAsync();
+                    case "z-a":
+                    return await _dbContext.Products
+                        .Include(p => p.ProductItems)
+                        .ThenInclude(pi => pi.ProductItemImages)
+                        .Where(p => p.Category.Slug == category)
+                        .OrderByDescending(p => p.Name)
+                        .ToListAsync();
+                case "ban-chay":
+                    return await _dbContext.OrderLines
+                        .Include(ol => ol.ProductItem)
+                        .ThenInclude(pi => pi.Product)
+                        .Where(ol => ol.ProductItem.Product.Category.Slug == category)
+                        .GroupBy(ol => ol.ProductItem.Product)
+                        .OrderByDescending(g => g.Count())
+                        .Select(g => g.Key)
+                        .ToListAsync();
+                    default:
+                    return await _dbContext.Products
+                        .Include(p => p.ProductItems)
+                        .ThenInclude(pi => pi.ProductItemImages)
+                        .Where(p => p.Category.Slug == category)
+                        .ToListAsync();
+            }
+        }
     }
 }

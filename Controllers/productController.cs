@@ -33,7 +33,6 @@ namespace CoolMate.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "admin")]
         public async Task<ActionResult> GetAll([FromQuery] PaginationFilter filter)
         {
             var enpointUri = $"{Request.Scheme}://{Request.Host}/api/product";
@@ -75,12 +74,17 @@ namespace CoolMate.Controllers
         }
 
         [HttpGet("{category}")]
-        public async Task<ActionResult> GetByCategory(string category, [FromQuery] PaginationFilter filter)
+        public async Task<ActionResult> GetByCategoryWithFilter(string category, [FromQuery] PaginationFilter paging, [FromQuery] string filter)
         {
             var enpointUri = $"{Request.Scheme}://{Request.Host}/api/product/{category}";
-            var validFilter = new PaginationFilter(filter.PageNumber, filter.PageSize);
+            var validFilter = new PaginationFilter(paging.PageNumber, paging.PageSize);
+            
+            List<Product> productsWithItemsAndImages;
 
-            var productsWithItemsAndImages = await _productRepository.GetProductsByCategoryAsync(category);
+            if (filter == null) 
+                productsWithItemsAndImages = await _productRepository.GetProductsByCategoryAsync(category);
+            else
+                productsWithItemsAndImages = await _productRepository.GetProductsByCategoryWithFilterAsync(category, filter);
 
             var data = new List<ProductResDTO>();
 
