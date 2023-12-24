@@ -110,8 +110,8 @@ namespace CoolMate.Repositories
                 {
                     TotalSales = TotalSales,
                     TotalOrders = TotalOrders,
-                    CancelledPercentage = CountCancelled / TotalOrders * 100,
-                    CompletedPercentage = CountCompleted / TotalOrders * 100
+                    CancelledPercentage = Math.Round(((double)CountCancelled / (double)TotalOrders) * 100, 2),
+                    CompletedPercentage = Math.Round(((double)CountCompleted / (double)TotalOrders) * 100, 2)
                 }
             };
             return response;
@@ -133,7 +133,7 @@ namespace CoolMate.Repositories
                     total = g.Sum(x => (long)x.OrderTotal),
                     count = g.Count(),
                     time = new DateTime(g.Key.Year, g.Key.Month, 1)
-                }).OrderByDescending(o => o.time)
+                }).OrderBy(o => o.time)
             .ToList();
             return response;
         }
@@ -154,7 +154,7 @@ namespace CoolMate.Repositories
                     total = g.Sum(x => (long)x.OrderTotal),
                     count = g.Count(),
                     time = new DateTime(g.Key.Year, 1, 1).AddDays((g.Key.WeekofYear - 1) * 7)
-                }).OrderByDescending(o => o.time)
+                }).OrderBy(o => o.time)
                 .ToList();
             return response;
         }
@@ -175,7 +175,7 @@ namespace CoolMate.Repositories
                     total = g.Sum(x => (long)x.OrderTotal),
                     count = g.Count(),
                     time = new DateTime(g.Key.Year, g.Key.Month, g.Key.Date.Day)
-                }).OrderByDescending(o => o.time)
+                }).OrderBy(o => o.time)
                 .ToList();
             return response;
         }

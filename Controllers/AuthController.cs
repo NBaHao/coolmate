@@ -92,12 +92,10 @@ namespace CoolMate.Controllers
 
             var email = authenticateResult.Principal.FindFirst(ClaimTypes.Email)?.Value;
 
-            // Check if the user already exists in the database
             var existingUser = await _userRepository.IsUserExists(email);
                 
             if (existingUser == false)
             {
-                // Create a new user in the database
                 var newUser = new SiteUser
                 { 
                     Email = email,
