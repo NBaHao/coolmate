@@ -73,6 +73,8 @@ builder.Services.AddAuthentication(options =>
     googleOptions.ClientSecret = builder.Configuration.GetSection("GoogleAuthSettings").GetValue<string>("ClientSecret");
 }); 
 
+builder.Services.AddMemoryCache();
+
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.Configure<DataProtectionTokenProviderOptions>(o =>
         o.TokenLifespan = TimeSpan.FromMinutes(10));
