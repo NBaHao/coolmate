@@ -130,6 +130,7 @@ namespace CoolMate.Controllers
             {
                 case 0:
                     await _shoppingCartRepository.RemoveAllItemsInCartAsync(userId);
+                    await _productItemRepository.UpdateQtyInStockAsync(order.OrderLines.ToList());
                     return Ok("successfully");
                 case 1:
                     var momoPayment = new MomoPayment();
